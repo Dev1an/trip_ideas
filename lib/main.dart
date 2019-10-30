@@ -44,37 +44,30 @@ class BubblesState extends State<Bubbles> {
         BubbleNode.leaf(
             value: 4159,
             options: BubbleOptions(
-                child: CircleAvatar(
-                  backgroundImage: new AssetImage('assets/images/paris.jpg'),
-                  minRadius: 50,
-                  maxRadius: 60,
-                  child: Align(
-                      alignment: Alignment(0,0.5),
-                      child: Stack(
-                        children: <Widget>[
-                          // Stroked text as border.
-                          Text(
-                            'Paris',
-                            style: TextStyle(
-                              fontSize: 20,
-                              foreground: Paint()
-                                ..style = PaintingStyle.stroke
-                                ..strokeWidth = 2
-                                ..color = Colors.grey[900],
-                            ),
-                          ),
-                          // Solid text as fill.
-                          Text(
-                            'Paris',
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.grey[100],
-                            ),
-                          ),
-                        ],
-                      )
-                  ),
+                child: Stack(
+                  children: <Widget>[
+                    // Stroked text as border.
+                    Text(
+                      'Paris',
+                      style: TextStyle(
+                        fontSize: 20,
+                        foreground: Paint()
+                          ..style = PaintingStyle.stroke
+                          ..strokeWidth = 2
+                          ..color = Colors.grey[900],
+                      ),
+                    ),
+                    // Solid text as fill.
+                    Text(
+                      'Paris',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.grey[100],
+                      ),
+                    ),
+                  ],
                 ),
+                image: AssetImage('assets/images/paris.jpg'),
                 onTap: () {
                   Navigator.push(
                     context,
