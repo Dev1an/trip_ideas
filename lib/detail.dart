@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'custom_icons.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class DetailWidget extends StatefulWidget {
   @override
@@ -7,10 +10,9 @@ class DetailWidget extends StatefulWidget {
 }
 
 class _DetailWidgetState extends State<DetailWidget> {
-
+  static const int PHOTOS_AMOUNT = 5;
   // Handling favorite toggle
   bool _favorite = false;
-
   void _handleFavoriteChanged(bool newValue) {
     setState(() {
       _favorite = newValue;
@@ -19,15 +21,51 @@ class _DetailWidgetState extends State<DetailWidget> {
 
   // Handling visited toggle
   bool _visited = false;
-
   void _handleVisitedChanged(bool newValue) {
     setState(() {
       _visited = newValue;
     });
   }
 
+  Future<List<String>> photoUrls;
+  int calledBuild = 0;
+  // The DETAIL build method
   @override
   Widget build(BuildContext context) {
+    calledBuild++;
+    if(calledBuild==1) photoUrls = getImageUrls("paris");
+
+    // Image carousel
+    Widget photoSection = new Container(
+      child:  new Swiper(
+        itemBuilder: (BuildContext context,int index){
+          return FutureBuilder(
+            future: photoUrls,
+            builder: (context,snapshot) {
+              if(snapshot.connectionState == ConnectionState.done) {
+                return Image.network(snapshot.data[index]);
+              } else {
+                return new SizedBox(
+                    width: 20.0,
+                    height: 20.0,
+                    child: CircularProgressIndicator()
+                );
+              }
+            },
+          );
+           // new Image.network(urls[index],fit: BoxFit.fill);
+          //return new Image.network("http://via.placeholder.com/350x150",fit: BoxFit.fill,);
+        },
+        itemCount: PHOTOS_AMOUNT,
+        viewportFraction: 0.8,
+        scale: 0.9,
+        pagination: new SwiperPagination(),
+        control: new SwiperControl(),
+      ),
+      height: 200,
+    ) ;
+
+
     // Title row
     Widget titleSection = Container(
       padding: const EdgeInsets.all(32),
@@ -117,12 +155,7 @@ class _DetailWidgetState extends State<DetailWidget> {
         ),
         body: ListView(
           children: [
-            Image.asset(
-              'assets/images/paris.jpg',
-              width: 600,
-              height: 240,
-              fit: BoxFit.cover,
-            ),
+            photoSection,
             titleSection,
             buttonSection,
             textSection,
@@ -160,6 +193,33 @@ class _DetailWidgetState extends State<DetailWidget> {
       ],
     );
   }
+
+
+  // Helper method to retrieve images
+  Future<List<String>> getImageUrls(String city) async{
+    String exlude = "+-woman+-animal+-flower+-meal+-postcard+-door+-painting";
+    int resultLimit = 40;
+    String url = "https://pixabay.com/api/?key=14114941-200003d620e7a15f560cb840c";
+    url += "&q="+city+exlude+"&image_type=photo&orientation=horizontal&category=travel&page=1&per_page="+resultLimit.toString();
+
+    List<String> list =  new List();
+
+    final response = await http.get(url);
+    var data = json.decode(response.body);
+    List<dynamic> hits = data['hits'];
+
+    var randomIndices = new List<int>.generate(resultLimit, (int index) => index); // [0, 1, 4]
+    randomIndices.shuffle();
+    print("HITS LENGHTH");
+    print(hits.length);
+
+    for(int i=0; i<PHOTOS_AMOUNT;i++) {
+      //list.add(hits[i]["webformatURL"]);
+      list.add(hits[randomIndices[i]]["webformatURL"]);
+    }
+    return list;
+  }
+
 }
 
 class FavoriteWidget extends StatelessWidget {
@@ -253,3 +313,4 @@ class VisitedWidget extends StatelessWidget {
   }
 
 }
+
