@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'custom_icons.dart';
 
 class DetailWidget extends StatefulWidget {
   @override
@@ -91,6 +92,25 @@ class _DetailWidgetState extends State<DetailWidget> {
       ),
     );
 
+    // Characteristics section
+    Widget characteristicsSection = ListView(
+      shrinkWrap: true,
+      children: <Widget>[
+        ListTile(
+          leading: Icon(CustomIcons.park),
+          title: Text('Nature & parks'),
+        ),
+        ListTile(
+          leading: Icon(CustomIcons.theater),
+          title: Text('Theaters'),
+        ),
+        ListTile(
+          leading: Icon(CustomIcons.sport),
+          title: Text('Sport'),
+        ),
+      ],
+    );
+
     return Scaffold(
         appBar: AppBar(
           title: Text("Detail view"),
@@ -105,7 +125,8 @@ class _DetailWidgetState extends State<DetailWidget> {
             ),
             titleSection,
             buttonSection,
-            textSection
+            textSection,
+            characteristicsSection
           ],
         ));
   }
