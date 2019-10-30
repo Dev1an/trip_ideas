@@ -121,7 +121,6 @@ class BubblesState extends State<Bubbles> {
         ),
       ],
     );
-
     return BubbleChartLayout(root: root);
   }
 }

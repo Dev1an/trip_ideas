@@ -18,9 +18,9 @@ packages:
   bubble_chart:
     dependency: "direct main"
     description:
-      name: bubble_chart
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "bubble_chart-0.2.0+extended"
+      relative: true
+    source: path
     version: "0.2.0"
   charcode:
     dependency: transitive
