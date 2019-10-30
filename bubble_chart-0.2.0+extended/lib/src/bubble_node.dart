@@ -109,9 +109,11 @@ class BubbleOptions {
   final BoxBorder border;
   final Widget child;
   final GestureTapCallback onTap;
+  final ImageProvider image;
 
   BubbleOptions({
     this.color,
+    this.image,
     this.border,
     this.child,
     this.onTap,

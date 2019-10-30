@@ -20,6 +20,9 @@ class BubbleLayer extends StatelessWidget {
         decoration: BoxDecoration(
           border: bubble.options?.border ?? Border(),
           color: bubble.options?.color ?? Theme.of(context).accentColor,
+          image: bubble.options.image == null ?
+            null :
+            DecorationImage(image: bubble.options.image, fit: BoxFit.cover),
           shape: BoxShape.circle,
         ),
         child: Center(
