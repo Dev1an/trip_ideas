@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:trip_ideas/favorites.dart';
+import 'favoriteOrVisited.dart';
 import 'custom_icons.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:http/http.dart' as http;
@@ -7,13 +7,21 @@ import 'dart:convert';
 import 'database_helpers.dart';
 
 class DetailWidget extends StatefulWidget {
+  final int destID;
+  DetailWidget({Key key, @required this.destID}) : super(key: key);
+
   @override
-  _DetailWidgetState createState() => _DetailWidgetState();
+  _DetailWidgetState createState() => _DetailWidgetState(destID);
 }
 
 class _DetailWidgetState extends State<DetailWidget> {
   static const int PHOTOS_AMOUNT = 5;
-  int currentDestID = 2;
+  int currentDestID;
+
+  _DetailWidgetState(int destID) {
+    this.currentDestID = destID;
+  }
+
   Destination currentDestination = new Destination();
 
   @override
@@ -171,14 +179,19 @@ class _DetailWidgetState extends State<DetailWidget> {
           actions: <Widget>[
             new IconButton(
               icon: new Icon(Icons.assignment_turned_in),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => FavoriteOrVisitedList(type: FavOrVisEnum.visited)),
+                ).then((e) => {_loadDetailsOfCurrent()}); // Refresh on back
+              },
             ),
             new IconButton(
               icon: new Icon(Icons.favorite),
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => FavoritesList()),
+                  MaterialPageRoute(builder: (context) => FavoriteOrVisitedList(type: FavOrVisEnum.favorite)),
                 ).then((e) => {_loadDetailsOfCurrent()}); // Refresh on back
               },
             ),

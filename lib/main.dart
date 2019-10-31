@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:bubble_chart/bubble_chart.dart';
 import 'detail.dart';
@@ -78,7 +77,7 @@ class BubblesState extends State<Bubbles> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => DetailWidget()),
+                    MaterialPageRoute(builder: (context) => DetailWidget(destID: 1)),
                   );
                 }
             )
