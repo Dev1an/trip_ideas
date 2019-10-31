@@ -53,6 +53,7 @@ class FavoriteOrVisited {
 
   int id;
   String destination;
+  String country;
 
   FavoriteOrVisited();
 
@@ -60,12 +61,14 @@ class FavoriteOrVisited {
   FavoriteOrVisited.fromMap(Map<String, dynamic> map) {
     id = map[columnId];
     destination = map[columnDestinationCity];
+    country = map[columnDestinationCountry];
   }
 
   // convenience method to create a Map from this Favorite object
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{
-      columnDestinationCity: destination
+      columnDestinationCity: destination,
+      columnDestinationCountry: country
     };
     if (id != null) {
       map[columnId] = id;
@@ -129,16 +132,18 @@ class DatabaseHelper {
                 $columnDescription TEXT NOT NULL
               )
               ''');
-    /*await db.execute('''
+    await db.execute('''
        CREATE TABLE $tableFavorites (
         $columnId INTEGER PRIMARY KEY,
-        $columnDestinationCity TEXT NOT NULL
+        $columnDestinationCity TEXT NOT NULL,
+        $columnDestinationCountry TEXT NOT NULL
        )''');
     await db.execute('''
        CREATE TABLE $tableVisited (
         $columnId INTEGER PRIMARY KEY,
-        $columnDestinationCity TEXT NOT NULL
-       )''');*/
+        $columnDestinationCity TEXT NOT NULL,
+        $columnDestinationCountry TEXT NOT NULL
+       )''');
   }
 
   // Database helper methods:
@@ -193,6 +198,27 @@ class DatabaseHelper {
   Future<int> deleteFavoriteOrVisited(int id,String table) async {
     Database db = await database;
     return await db.delete(table, where: '$columnId = ?', whereArgs: [id]);
+  }
+
+  // CHECK IF EXISTS
+  Future<bool> checkIfExistsFavorite(int id) async {
+    return checkIfExists(id, tableFavorites);
+  }
+
+  Future<bool> checkIfExistsVisited(int id) async {
+    return checkIfExists(id, tableVisited);
+  }
+
+  Future<bool> checkIfExists(int id, String table) async {
+    Database db = await database;
+    List<Map> maps = await db.query(table,
+        columns: [columnId],
+        where: '$columnId = ?',
+        whereArgs: [id]);
+    if (maps.length > 0) {
+      return true;
+    }
+    return false;
   }
 
   // QUERY ALL

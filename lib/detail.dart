@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trip_ideas/favorites.dart';
 import 'custom_icons.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:http/http.dart' as http;
@@ -12,7 +13,7 @@ class DetailWidget extends StatefulWidget {
 
 class _DetailWidgetState extends State<DetailWidget> {
   static const int PHOTOS_AMOUNT = 5;
-  int currentDestID = 1;
+  int currentDestID = 2;
   Destination currentDestination = new Destination();
 
   @override
@@ -27,6 +28,8 @@ class _DetailWidgetState extends State<DetailWidget> {
   void _handleFavoriteChanged(bool newValue) {
     setState(() {
       _favorite = newValue;
+      if(_favorite) _addFavorite(currentDestination);
+      else _deleteFavorite(currentDestination);
     });
   }
 
@@ -35,6 +38,8 @@ class _DetailWidgetState extends State<DetailWidget> {
   void _handleVisitedChanged(bool newValue) {
     setState(() {
       _visited = newValue;
+      if(_visited) _addVisited(currentDestination);
+      else _deleteVisited(currentDestination);
     });
   }
 
@@ -45,7 +50,9 @@ class _DetailWidgetState extends State<DetailWidget> {
   @override
   Widget build(BuildContext context) {
     calledBuild++;
-    if (calledBuild == 2 && currentDestination.destination!="") photoUrls = getImageUrls(currentDestination.destination);
+    if (calledBuild == 2 && currentDestination !=null &&currentDestination.destination!="")
+      // Only called once (i.e. not when FavoriteWidget invokes setState)
+      photoUrls = getImageUrls(currentDestination.destination);
 
     // Image carousel
     Widget photoSection = new Container(
@@ -108,7 +115,7 @@ class _DetailWidgetState extends State<DetailWidget> {
           ),
           /*3*/
           Icon(
-            Icons.map,
+            Icons.near_me,
             color: Colors.grey[500],
           ),
           Text('321km'),
@@ -122,7 +129,7 @@ class _DetailWidgetState extends State<DetailWidget> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildButtonColumn(color, Icons.near_me, 'ROUTE'),
+          _buildButtonColumn(color, Icons.map, 'Location'),
           FavoriteWidget(
               favorite: _favorite, onChanged: _handleFavoriteChanged),
           VisitedWidget(visited: _visited, onChanged: _handleVisitedChanged),
@@ -161,6 +168,25 @@ class _DetailWidgetState extends State<DetailWidget> {
     return Scaffold(
         appBar: AppBar(
           title: Text("Detail view"),
+          actions: <Widget>[
+            new IconButton(
+              icon: new Icon(Icons.assignment_turned_in),
+              onPressed: () {},
+            ),
+            new IconButton(
+              icon: new Icon(Icons.favorite),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => FavoritesList()),
+                ).then((e) => {_loadDetailsOfCurrent()}); // Refresh on back
+              },
+            ),
+            new IconButton(
+              icon: new Icon(Icons.account_circle),
+              onPressed: () {},
+            )
+          ],
         ),
         body: ListView(
           children: [
@@ -247,26 +273,44 @@ class _DetailWidgetState extends State<DetailWidget> {
     }
   }
 
-  _addFavorite(FavoriteOrVisited fv) async {
+  _addFavorite(Destination dest) async {
     DatabaseHelper helper = DatabaseHelper.instance;
-    int id = await helper.insertFavorite(fv);
-    print('inserted row: $id');
+    FavoriteOrVisited fv = new FavoriteOrVisited();
+    fv.id = dest.id;
+    fv.destination = dest.destination;
+    fv.country = dest.country;
+    await helper.insertFavorite(fv);
+    print('inserted '+dest.destination+' as favorite');
   }
 
-  _addVisited(FavoriteOrVisited fv) async {
+  _addVisited(Destination dest) async {
     DatabaseHelper helper = DatabaseHelper.instance;
+    FavoriteOrVisited fv = new FavoriteOrVisited();
+    fv.id = dest.id;
+    fv.destination = dest.destination;
+    fv.country = dest.country;
     int id = await helper.insertVisited(fv);
-    print('inserted row: $id');
+    print('inserted visited row: $id');
   }
 
-  _deleteFavorite(FavoriteOrVisited fv) async {
+  _deleteFavorite(Destination dest) async {
     DatabaseHelper helper = DatabaseHelper.instance;
-    await helper.deleteFavorite(fv.id);
+    await helper.deleteFavorite(dest.id);
+    print('deleted '+dest.destination+" as favorite");
   }
 
-  _deleteVisited(FavoriteOrVisited fv) async {
+  _deleteVisited(Destination dest) async {
     DatabaseHelper helper = DatabaseHelper.instance;
-    await helper.deleteVisited(fv.id);
+    await helper.deleteVisited(dest.id);
+    print('deleted '+dest.destination+" as visited");
+  }
+
+  Future<bool> _checkIfFavorite(Destination dest) async {
+    DatabaseHelper helper = DatabaseHelper.instance;
+    bool exists = await helper.checkIfExistsFavorite(dest.id);
+    print(exists ? dest.destination+" is favorite": dest.destination+" is not favorite");
+
+    return exists;
   }
 
   _initializeDestinationDB() async {
@@ -302,10 +346,12 @@ class _DetailWidgetState extends State<DetailWidget> {
     currentDestination.country="";
 
     _readDestination(currentDestID).then((destination) =>
-      setState(() {
-        currentDestination = destination;}
-      )
-    );
+        _checkIfFavorite(destination).then((exists) =>
+            setState(() {
+              currentDestination = destination;
+              _favorite = exists;
+            })));
+
   }
 }
 
