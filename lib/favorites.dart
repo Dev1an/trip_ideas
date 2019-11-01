@@ -43,7 +43,7 @@ class FavoritesListState extends State<FavoritesList> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => DetailWidget()),
+              MaterialPageRoute(builder: (context) => DetailWidget(destID: _favorites[index].id)),
             );
           },
         ),

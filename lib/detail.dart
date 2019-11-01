@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'favoriteOrVisited.dart';
 import 'custom_icons.dart';
@@ -5,6 +7,8 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'database_helpers.dart';
+
+const bool LOCALHOST  = true; // Use localhost or Heroku for details lookup
 
 class DetailWidget extends StatefulWidget {
   final int destID;
@@ -27,7 +31,7 @@ class _DetailWidgetState extends State<DetailWidget> {
   @override
   void initState() {
     super.initState();
-    _initializeDestinationDB();
+    //_initializeDestinationDB();
     _loadDetailsOfCurrent();
   }
 
@@ -155,21 +159,14 @@ class _DetailWidgetState extends State<DetailWidget> {
     );
 
     // Characteristics section
-    Widget characteristicsSection = ListView(
-      shrinkWrap: true,
+    Widget characteristicsSection = Row(
+      //Creates even space between each item and their parent container
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
-        ListTile(
-          leading: Icon(CustomIcons.park),
-          title: Text('Nature & parks'),
-        ),
-        ListTile(
-          leading: Icon(CustomIcons.theater),
-          title: Text('Theaters'),
-        ),
-        ListTile(
-          leading: Icon(CustomIcons.sport),
-          title: Text('Sport'),
-        ),
+        _buildCharacteristicContainer(CustomIcons.theater, "Theaters", Color(0xffD2E0E1)),
+        _buildCharacteristicContainer(CustomIcons.sport, "Sports", Color(0xffFEF1D0)),
+        _buildCharacteristicContainer(CustomIcons.park, "Parks", Color(0xffE3F579)),
+        _buildCharacteristicContainer(Icons.account_balance, "Musea", Color(0xffF4C2C2))
       ],
     );
 
@@ -207,12 +204,31 @@ class _DetailWidgetState extends State<DetailWidget> {
             titleSection,
             buttonSection,
             textSection,
-            characteristicsSection
+            characteristicsSection,
+            SizedBox(height: 10)
           ],
         ));
   }
 
   //=============== HELPER METHODS ===================
+
+  Container _buildCharacteristicContainer(IconData icon, String text, Color color) {
+    return Container(
+        width: 80.0,
+        height: 80.0,
+        decoration: new BoxDecoration(
+          color: color,
+          shape: BoxShape.circle,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[Icon(icon,color: Colors.black45,),
+                Text(text,style:TextStyle(color: Colors.black45)),
+                Text('5',style: TextStyle(color: Colors.black45, fontSize: 18),)],
+        )
+    );
+  }
 
   // Helper method to create columns
   Column _buildButtonColumn(Color color, IconData icon, String label) {
@@ -274,7 +290,7 @@ class _DetailWidgetState extends State<DetailWidget> {
   }
 
   // Helper method to read from database
-  Future<Destination> _readDestination(int destID) async {
+  Future<Destination> _readDestinationFromCache(int destID) async {
     DatabaseHelper helper = DatabaseHelper.instance;
     Destination dest = await helper.queryDestination(destID);
     if (dest == null) {
@@ -284,6 +300,12 @@ class _DetailWidgetState extends State<DetailWidget> {
       print('read row $destID: ${dest.destination} ${dest.country}');
       return dest;
     }
+  }
+
+  _addDestinationToCache(Destination dest) async {
+    DatabaseHelper helper = DatabaseHelper.instance;
+    await helper.insertDestination(dest);
+    print('inserted '+dest.destination+' in cache');
   }
 
   _addFavorite(Destination dest) async {
@@ -358,6 +380,7 @@ class _DetailWidgetState extends State<DetailWidget> {
     currentDestination.location="";
     currentDestination.country="";
 
+    /*
     _readDestination(currentDestID).then((destination) =>
         _checkIfFavorite(destination).then((exists) =>
             setState(() {
@@ -365,7 +388,68 @@ class _DetailWidgetState extends State<DetailWidget> {
               _favorite = exists;
             })));
 
+     */
+    _getDetailsOfDestination(currentDestID).then((destination) =>
+        _checkIfFavorite(destination).then((exists) =>
+            setState(() {
+              currentDestination = destination;
+              _favorite = exists;
+            })
+        )
+    );
+
+    //_getRecommendationsDEBUG();
   }
+
+  Future<Destination> _getDetailsOfDestination(int destID) async {
+    // CHECK IF AVAILABLE IN CACHE
+    DatabaseHelper helper = DatabaseHelper.instance;
+    bool exists = await helper.checkIfExistsDestination(destID);
+    if (exists) return _readDestinationFromCache(destID);
+
+    // NOT IN CACHE
+    Destination destination = new Destination();
+    // URL
+    String host;
+    if(LOCALHOST) host="localhost:5000";
+    else host="http://tripideas.heroku.com/";
+    String url = 'http://'+host+'/destination/?id='+destID.toString();
+    // GET REQUEST
+    var response = await http.get(url);  // sample info available in response
+
+    // PARSE RESPONSE
+    int statusCode = response.statusCode;
+    if(statusCode == HttpStatus.ok) {
+      var data = json.decode(response.body);
+      print(data);
+      var raw_destination = data['MESSAGE'];
+      destination =  new Destination();
+      destination.id = destID;
+      destination.country = raw_destination['country'];
+      destination.destination = raw_destination['destination'];
+      destination.description = raw_destination['description'];
+      destination.location = raw_destination['location'];
+
+      // ADD TO CACHE
+      _addDestinationToCache(destination);
+
+      return destination;
+    } else {
+      // ?
+    }
+
+    return destination;
+  }
+
+  void _getRecommendationsDEBUG() async {
+
+    var url = "http://localhost:5000/recommendations/";
+    var resp = await http.post(url, body: {'parks':'as much as possible','theaters':'none'});
+    //print('Response status: ${resp.statusCode}');
+    print('Response body: ${resp.body}');
+
+  }
+
 }
 
 class FavoriteWidget extends StatelessWidget {

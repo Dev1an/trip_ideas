@@ -148,12 +148,14 @@ class DatabaseHelper {
 
   // Database helper methods:
   // -------- DESTINATIONS --------
+  // INSERT
   Future<int> insertDestination(Destination dest) async {
     Database db = await database;
     int id = await db.insert(tableDestinations, dest.toMap());
     return id;
   }
 
+  // QUERY DESTINATION
   Future<Destination> queryDestination(int id) async {
     Database db = await database;
     List<Map> maps = await db.query(tableDestinations,
@@ -164,6 +166,19 @@ class DatabaseHelper {
       return Destination.fromMap(maps.first);
     }
     return null;
+  }
+
+  // CHECK IF EXISTS
+  Future<bool> checkIfExistsDestination(int id) async {
+    Database db = await database;
+    List<Map> maps = await db.query(tableDestinations,
+        columns: [columnId],
+        where: '$columnId = ?',
+        whereArgs: [id]);
+    if (maps.length > 0) {
+      return true;
+    }
+    return false;
   }
 
 // TO DO: queryAllDestinations()
