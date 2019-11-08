@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:bubble_chart/bubble_chart.dart';
+import 'package:flutter/material.dart' as prefix0;
 import 'package:trip_ideas/bubbleScreen/BubbleData.dart';
 import 'package:trip_ideas/bubbleScreen/MockData.dart';
 import '../detail.dart';
 
-class BubbleScreen extends StatelessWidget {
+class BubbleScreenState extends State<BubbleScreen> {
+  final data = loadData();
+
   @override
   Widget build(BuildContext context) {
-    loadData();
     return MaterialApp(
         title: "Trip Ideas",
         home: Scaffold(
@@ -34,16 +36,13 @@ class BubbleScreen extends StatelessWidget {
   }
 }
 
-class BubblesState extends State<Bubbles> {
-  final cities = <String>[];
+class BubbleScreen extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => BubbleScreenState();
+}
 
-  void addCity() {
-    setState(() {
-      cities.add('Hello');
-    });
-  }
-
-  BubbleNode destinationWidget(DestinationBubbleData data) {
+class Bubbles extends StatelessWidget {
+  BubbleNode destinationWidget(DestinationBubbleData data, context) {
     return BubbleNode.leaf(
         value: 5,
         options: BubbleOptions(
@@ -89,14 +88,8 @@ class BubblesState extends State<Bubbles> {
   Widget build(BuildContext context) {
     final root = BubbleNode.node(
       padding: 15,
-      children: sampleData.map(destinationWidget).toList(),
+      children: sampleData.map((place) => destinationWidget(place, context)).toList(),
     );
     return BubbleChartLayout(root: root);
   }
 }
-
-class Bubbles extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => BubblesState();
-}
-
