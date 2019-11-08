@@ -46,11 +46,31 @@ class BubbleScreenState extends State<BubbleScreen> {
               )
             ],
           ),
-          body: Bubbles(destinations: selectedDestinations),
+          body: Column(
+            children: [
+              Container(child: Bubbles(destinations: selectedDestinations), height: 500,),
+              ParameterSliders()
+            ],
+          ),
           floatingActionButton: FloatingActionButton(child: Icon(Icons.refresh), onPressed: () {
             setState(selectRandomPlaces);
           },),
         )
+    );
+  }
+}
+
+class ParameterSliders extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        child: Row(
+          children: [
+            Text('Sea'),
+            Flexible(child: Slider(value: 0.5, min: 0, max: 1, onChanged: (value) {print(value);},))
+          ],
+        ),
+        padding: EdgeInsets.all(16),
     );
   }
 }
