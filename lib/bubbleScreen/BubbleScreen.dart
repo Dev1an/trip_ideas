@@ -54,7 +54,7 @@ class BubbleScreenState extends State<BubbleScreen> {
           ),
           body: Column(
             children: [
-              Container(child: Bubbles(destinations: selectedDestinations), height: 500,),
+              Flexible(child: Bubbles(destinations: selectedDestinations)),
               ParameterSliders(
                 parameters: parameters,
                 changeCallback: (changeParameter) {
@@ -95,7 +95,7 @@ class ParameterSliders extends StatelessWidget {
           )
         ],
       ),
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.symmetric(horizontal: 16),
     );
   }
 
