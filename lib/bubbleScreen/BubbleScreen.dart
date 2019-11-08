@@ -55,11 +55,18 @@ class BubbleScreenState extends State<BubbleScreen> {
           body: Column(
             children: [
               Container(child: Bubbles(destinations: selectedDestinations), height: 500,),
-              ParameterSliders(parameters: parameters,)
+              ParameterSliders(
+                parameters: parameters,
+                changeCallback: (changeParameter) {
+                  setState(changeParameter);
+                }
+              )
             ],
           ),
           floatingActionButton: FloatingActionButton(child: Icon(Icons.refresh), onPressed: () {
             setState(selectRandomPlaces);
+            print("Load bubbles with settings:");
+            parameters.forEach((parameter) => print("\t- ${parameter.description}:\t${parameter.value}"));
           },),
         )
     );
@@ -68,9 +75,9 @@ class BubbleScreenState extends State<BubbleScreen> {
 
 class ParameterSliders extends StatelessWidget {
   final List<Parameter> parameters;
+  final void Function(void Function()) changeCallback;
 
-  const ParameterSliders({Key key, this.parameters}) : super(key: key);
-
+  const ParameterSliders({Key key, this.parameters, this.changeCallback}) : super(key: key);
 
   Container createRow(Parameter parameter) {
     return Container(
@@ -82,7 +89,7 @@ class ParameterSliders extends StatelessWidget {
                 value: parameter.value,
                 min: 0, max: 1,
                 onChanged: (value) {
-                  parameter.value = value;
+                  changeCallback(() {parameter.value = value;});
                 },
               )
           )
