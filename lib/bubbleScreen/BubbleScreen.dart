@@ -19,8 +19,8 @@ class BubbleScreenState extends State<BubbleScreen> {
 
   void selectRandomPlaces() {
     final random = new Random();
-    final index = random.nextInt(data.length);
     final count = random.nextInt(7) + 3;
+    final index = random.nextInt(data.length - count);
     selectedDestinations = data.sublist(index, index + count);
   }
 
