@@ -4,11 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:bubble_chart/bubble_chart.dart';
 import 'package:trip_ideas/bubbleScreen/BubbleData.dart';
 import 'package:trip_ideas/bubbleScreen/MockData.dart';
+import 'package:trip_ideas/bubbleScreen/Parameters.dart';
 import '../detail.dart';
 
 class BubbleScreenState extends State<BubbleScreen> {
   final List<DestinationBubbleData> data = [];
   List<DestinationBubbleData> selectedDestinations = [];
+  final List<Parameter> parameters = [
+    Parameter('Beach', 0.20),
+    Parameter('Nature', 0.90),
+    Parameter('Culture', 0.70)
+  ];
 
   BubbleScreenState() {
     loadCsvData().then((newData) {
@@ -49,7 +55,7 @@ class BubbleScreenState extends State<BubbleScreen> {
           body: Column(
             children: [
               Container(child: Bubbles(destinations: selectedDestinations), height: 500,),
-              ParameterSliders()
+              ParameterSliders(parameters: parameters,)
             ],
           ),
           floatingActionButton: FloatingActionButton(child: Icon(Icons.refresh), onPressed: () {
@@ -61,16 +67,35 @@ class BubbleScreenState extends State<BubbleScreen> {
 }
 
 class ParameterSliders extends StatelessWidget {
+  final List<Parameter> parameters;
+
+  const ParameterSliders({Key key, this.parameters}) : super(key: key);
+
+
+  Container createRow(Parameter parameter) {
+    return Container(
+      child: Row(
+        children: [
+          Text(parameter.description),
+          Flexible(
+              child: Slider(
+                value: parameter.value,
+                min: 0, max: 1,
+                onChanged: (value) {
+                  parameter.value = value;
+                },
+              )
+          )
+        ],
+      ),
+      padding: EdgeInsets.all(16),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: Row(
-          children: [
-            Text('Sea'),
-            Flexible(child: Slider(value: 0.5, min: 0, max: 1, onChanged: (value) {print(value);},))
-          ],
-        ),
-        padding: EdgeInsets.all(16),
+    return Column(
+      children: parameters.map(createRow).toList(),
     );
   }
 }
