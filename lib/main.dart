@@ -35,14 +35,30 @@ class TripIdeas extends StatelessWidget {
 }
 
 class BubblesState extends State<Bubbles> {
-  int test = 0;
+  final cities = <String>[];
+
+  void addCity() {
+    setState(() {
+      cities.add('Hello');
+    });
+  }
+
+  BubbleNode cityNode(String name) {
+    return BubbleNode.leaf(
+      value: 5,
+      options: BubbleOptions(
+          child: Text(name, style: TextStyle(color: Colors.white))
+      )
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final root = BubbleNode.node(
       padding: 15,
       children: [
         BubbleNode.leaf(
-            value: 4159,
+            value: 5,
             options: BubbleOptions(
                 child: Stack(
                   children: <Widget>[
@@ -76,42 +92,12 @@ class BubblesState extends State<Bubbles> {
                 }
             )
         ),
-        BubbleNode.leaf(
-            value: 2074,
-            options: BubbleOptions(
-                child: Text('Venice', style: TextStyle(color: Colors.white))
-            )
-        ),
-        BubbleNode.leaf(
-            value: 4319,
-            options: BubbleOptions(
-                child: Text('Rome', style: TextStyle(color: Colors.white))
-            )
-        ),
-        BubbleNode.leaf(
-            value: 2074,
-            options: BubbleOptions(
-                child: Text('Rouen', style: TextStyle(color: Colors.white))
-            )
-        ),
-        BubbleNode.leaf(
-            value: 2074,
-            options: BubbleOptions(
-                child: Text('Bretagne', style: TextStyle(color: Colors.white))
-            )
-        ),
-        BubbleNode.leaf(
-            value: 2074,
-            options: BubbleOptions(
-                child: Text('England', style: TextStyle(color: Colors.white))
-            )
-        ),
-        BubbleNode.leaf(
-            value: 2074,
-            options: BubbleOptions(
-                child: Text('Oxford', style: TextStyle(color: Colors.white))
-            )
-        ),
+        cityNode('Venice'),
+        cityNode('Rome'),
+        cityNode('Rouen'),
+        cityNode('Bretagne'),
+        cityNode('England'),
+        cityNode('Oxford'),
       ],
     );
     return BubbleChartLayout(root: root);
