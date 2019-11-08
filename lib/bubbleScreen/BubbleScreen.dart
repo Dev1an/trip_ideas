@@ -14,15 +14,13 @@ class BubbleScreenState extends State<BubbleScreen> {
   BubbleScreenState() {
     loadData().then((newData) {
       data.addAll(newData);
-      print('data loaded');
       setState(selectRandomPlaces);
     });
   }
 
   void selectRandomPlaces() {
     final index = new Random().nextInt(data.length);
-    selectedDestinations = data.sublist(index, index + 10);
-    print(selectedDestinations);
+    selectedDestinations = data.sublist(index, index + 5);
   }
 
   @override

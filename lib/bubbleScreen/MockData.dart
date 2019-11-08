@@ -19,6 +19,6 @@ Future<Iterable<DestinationBubbleData>> loadData() async {
   final rows = const CsvToListConverter(fieldDelimiter: ';', eol: '\n').convert(csv);
   return rows.map((fields) => DestinationBubbleData(
     name: fields[0],
-    pictureUrl: fields[1]
+    pictureUrl: fields[2]
   ));
 }
