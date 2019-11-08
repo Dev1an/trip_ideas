@@ -7,6 +7,7 @@ import '../detail.dart';
 class BubbleScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    loadData();
     return MaterialApp(
         title: "Trip Ideas",
         home: Scaffold(
@@ -88,7 +89,7 @@ class BubblesState extends State<Bubbles> {
   Widget build(BuildContext context) {
     final root = BubbleNode.node(
       padding: 15,
-      children: destinations.map(destinationWidget).toList(),
+      children: sampleData.map(destinationWidget).toList(),
     );
     return BubbleChartLayout(root: root);
   }
