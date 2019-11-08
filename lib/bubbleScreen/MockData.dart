@@ -14,8 +14,11 @@ final sampleData = {
   DestinationBubbleData(name: "Oxford", pictureUrl: 'https://www.telegraph.co.uk/content/dam/education/2017/01/03/oxford-uni_trans_NvBQzQNjv4Bqox62pZtR-cGG9XPRDwknLfY3lL1NglnEUrCGcyD9d6g.jpg?imwidth=450'),
 };
 
-Future loadData() async {
+Future<Iterable<DestinationBubbleData>> loadData() async {
   final csv = await rootBundle.loadString("assets/data/TripIdeas.csv");
-  final fields = const CsvToListConverter(fieldDelimiter: ';', eol: '\n').convert(csv);
-  print(fields.length);
+  final rows = const CsvToListConverter(fieldDelimiter: ';', eol: '\n').convert(csv);
+  return rows.map((fields) => DestinationBubbleData(
+    name: fields[0],
+    pictureUrl: fields[1]
+  ));
 }

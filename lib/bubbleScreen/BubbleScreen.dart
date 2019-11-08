@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:bubble_chart/bubble_chart.dart';
 import 'package:flutter/material.dart' as prefix0;
@@ -6,7 +8,22 @@ import 'package:trip_ideas/bubbleScreen/MockData.dart';
 import '../detail.dart';
 
 class BubbleScreenState extends State<BubbleScreen> {
-  final data = loadData();
+  final List<DestinationBubbleData> data = [];
+  List<DestinationBubbleData> selectedDestinations = [];
+
+  BubbleScreenState() {
+    loadData().then((newData) {
+      data.addAll(newData);
+      print('data loaded');
+      setState(selectRandomPlaces);
+    });
+  }
+
+  void selectRandomPlaces() {
+    final index = new Random().nextInt(data.length);
+    selectedDestinations = data.sublist(index, index + 10);
+    print(selectedDestinations);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +47,10 @@ class BubbleScreenState extends State<BubbleScreen> {
               )
             ],
           ),
-          body: Bubbles(),
+          body: Bubbles(destinations: selectedDestinations),
+          floatingActionButton: FloatingActionButton(child: Icon(Icons.refresh), onPressed: () {
+            setState(selectRandomPlaces);
+          },),
         )
     );
   }
@@ -42,6 +62,10 @@ class BubbleScreen extends StatefulWidget {
 }
 
 class Bubbles extends StatelessWidget {
+  final Iterable<DestinationBubbleData> destinations;
+
+  const Bubbles({Key key, this.destinations}) : super(key: key);
+
   BubbleNode destinationWidget(DestinationBubbleData data, context) {
     return BubbleNode.leaf(
         value: 5,
@@ -86,9 +110,11 @@ class Bubbles extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (destinations.isEmpty) return Text('no items');
+
     final root = BubbleNode.node(
       padding: 15,
-      children: sampleData.map((place) => destinationWidget(place, context)).toList(),
+      children: destinations.map((place) => destinationWidget(place, context)).toList(),
     );
     return BubbleChartLayout(root: root);
   }
