@@ -55,11 +55,14 @@ class BubbleScreenState extends State<BubbleScreen> {
           body: Column(
             children: [
               Flexible(child: Bubbles(destinations: selectedDestinations)),
-              ParameterSliders(
-                parameters: parameters,
-                changeCallback: (changeParameter) {
-                  setState(changeParameter);
-                }
+              Container(
+                child: ParameterSliders(
+                    parameters: parameters,
+                    changeCallback: (changeParameter) {
+                      setState(changeParameter);
+                    }
+                ),
+                padding: EdgeInsets.fromLTRB(0, 0, 0, 40),
               )
             ],
           ),
