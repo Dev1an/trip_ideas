@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:bubble_chart/bubble_chart.dart';
-import 'package:flutter/material.dart' as prefix0;
 import 'package:trip_ideas/bubbleScreen/BubbleData.dart';
 import 'package:trip_ideas/bubbleScreen/MockData.dart';
 import '../detail.dart';
