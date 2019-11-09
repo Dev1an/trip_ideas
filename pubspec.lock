@@ -18,9 +18,9 @@ packages:
   bubble_chart:
     dependency: "direct main"
     description:
-      name: bubble_chart
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "bubble_chart-0.2.0+extended"
+      relative: true
+    source: path
     version: "0.2.0"
   charcode:
     dependency: transitive
@@ -36,6 +36,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.14.11"
+  csv:
+    dependency: "direct main"
+    description:
+      name: csv
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.0.3"
   cupertino_icons:
     dependency: "direct main"
     description:
