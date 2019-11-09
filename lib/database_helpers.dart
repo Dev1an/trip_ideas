@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:sqflite/sqflite.dart';
+import 'model/Destination.dart';
+import 'model/DestinationSimple.dart';
 
 // Destinations database table and column names
 final String tableDestinations = 'destinations';
@@ -19,88 +21,7 @@ final String columnScoreNightlife = 'scorenightlife';
 final String tableFavorites = 'favorites';
 final String tableVisited = 'visited';
 final String tableShown = 'shown';
-
-// data model class
-class Destination {
-
-  int id;
-  String destination;
-  String country;
-  String location;
-  String description;
-  String otherImagesJSON;
-  int scoreBeach;
-  int scoreNature;
-  int scoreCulture;
-  int scoreShopping;
-  int scoreNightlife;
-
-  Destination();
-
-  // convenience constructor to create a Destination object from a Map
-  Destination.fromMap(Map<String, dynamic> map) {
-    id = map[columnId];
-    destination = map[columnDestinationCity];
-    country = map[columnDestinationCountry];
-    location = map[columnLocation];
-    description = map[columnDescription];
-    otherImagesJSON = map[columnOtherImages];
-    scoreBeach = map[columnScoreBeach];
-    scoreNature = map[columnScoreNature];
-    scoreCulture = map[columnScoreCulture];
-    scoreShopping = map[columnScoreShopping];
-    scoreNightlife = map[columnScoreNightlife];
-  }
-
-  // convenience method to create a Map from this Destination object
-  Map<String, dynamic> toMap() {
-    var map = <String, dynamic>{
-      columnDestinationCity: destination,
-      columnDestinationCountry: country,
-      columnLocation: location,
-      columnDescription: description,
-      columnOtherImages: otherImagesJSON,
-      columnScoreBeach: scoreBeach,
-      columnScoreNature: scoreNature,
-      columnScoreCulture: scoreCulture,
-      columnScoreShopping: scoreShopping,
-      columnScoreNightlife: scoreNightlife
-    };
-    if (id != null) {
-      map[columnId] = id;
-    }
-    return map;
-  }
-}
-
-class DestinationSimple {
-
-  int id;
-  String destination;
-  String country;
-
-  DestinationSimple();
-
-  // convenience constructor to create a DestinationSimple object from a Map
-  DestinationSimple.fromMap(Map<String, dynamic> map) {
-    id = map[columnId];
-    destination = map[columnDestinationCity];
-    country = map[columnDestinationCountry];
-  }
-
-  // convenience method to create a Map from this DestinationSimple object
-  Map<String, dynamic> toMap() {
-    var map = <String, dynamic>{
-      columnDestinationCity: destination,
-      columnDestinationCountry: country
-    };
-    if (id != null) {
-      map[columnId] = id;
-    }
-    return map;
-  }
-}
-
+final String tablePreferences = 'preferences';
 
 
 // singleton class to manage the database
@@ -108,15 +29,18 @@ class DatabaseHelper {
 
   // This is the actual database filename that is saved in the docs directory.
   static final _databaseName = "TripIdeasDatabase.db";
+
   // Increment this version when you need to change the schema.
   static final _databaseVersion = 1;
 
   // Make this a singleton class.
   DatabaseHelper._privateConstructor();
+
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
 
   // Only allow a single open connection to the database.
   static Database _database;
+
   Future<Database> get database async {
     if (_database != null) return _database;
     _database = await _initDatabase();
@@ -127,12 +51,14 @@ class DatabaseHelper {
   _initDatabase() async {
     // The path_provider plugin gets the right directory for Android or iOS.
     var databasesPath = await getDatabasesPath();
-    String path = p.join(databasesPath,_databaseName);
+    String path = p.join(databasesPath, _databaseName);
 
-// Make sure the directory exists
+  // Make sure the directory exists
     try {
       await Directory(databasesPath).create(recursive: true);
-    } catch (e) {print(e);}
+    } catch (e) {
+      print(e);
+    }
 
     // Open the database. Can also add an onUpdate callback parameter.
     return await openDatabase(path,
@@ -142,7 +68,6 @@ class DatabaseHelper {
 
   // SQL string to create the database
   Future _onCreate(Database db, int version) async {
-
     await db.execute('''
               CREATE TABLE $tableDestinations (
                 $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -178,16 +103,18 @@ class DatabaseHelper {
        )''');
   }
 
-  // Database helper methods:
-  // -------- DESTINATIONS --------
-  // INSERT
+  // __________________________________________________________
+  //                       HELPER METHODS
+  // __________________________________________________________
+  // ================== DESTINATIONS ==================
+  // ----------------- INSERT -----------------
   Future<int> insertDestination(Destination dest) async {
     Database db = await database;
     int id = await db.insert(tableDestinations, dest.toMap());
     return id;
   }
 
-  // QUERY DESTINATION
+  // ----------------- QUERY DESTINATION -----------------
   Future<Destination> readDestination(int id) async {
     print('queryDestination with id '+id.toString());
     Database db = await database;
@@ -203,14 +130,8 @@ class DatabaseHelper {
     return null;
   }
 
-
-
-// TO DO: queryAllDestinations()
-// TO DO: delete(int id)
-// TO DO: update(Destination destination)
-
-  // -------- FAVORITE OR VISITED OR SHOWN --------
-  // INSERT
+  // ================== FAVORITE OR VISITED OR SHOWN ==================
+  // ----------------- INSERT -----------------
   Future<int> insertFavorite(DestinationSimple fav) async {
     return _insertDestinationSimpleInTable(fav, tableFavorites);
   }
@@ -229,7 +150,7 @@ class DatabaseHelper {
     return id;
   }
 
-  // DELETE
+  // -----------------  DELETE -----------------
   Future<int> deleteFavorite(int id) async {
     return _deleteDestinationSimpleInTable(id, tableFavorites);
   }
@@ -247,7 +168,7 @@ class DatabaseHelper {
     return await db.delete(table, where: '$columnId = ?', whereArgs: [id]);
   }
 
-  // CHECK IF EXISTS
+  // ----------------- CHECK IF EXISTS -----------------
   Future<bool> checkIfExistsFavorite(int id) async {
     return _checkIfExistsInTable(id, tableFavorites);
   }
@@ -273,7 +194,7 @@ class DatabaseHelper {
     return false;
   }
 
-  // QUERY ALL
+  // -----------------  QUERY ALL -----------------
   Future<List<DestinationSimple>> queryAllFavorites() async {
     return _queryAllDestinationSimpleInTable(tableFavorites);
   }
@@ -294,7 +215,4 @@ class DatabaseHelper {
     return null;
   }
 
-
-
 }
-

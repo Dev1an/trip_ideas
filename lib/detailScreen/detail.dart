@@ -1,14 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import '../favoriteOrVisited.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:http/http.dart' as http;
+import 'package:percent_indicator/circular_percent_indicator.dart';
+
+import '../model/Destination.dart';
+import '../detailScreen/DetailCacheUtil.dart';
 import '../detailScreen/FavoriteWidget.dart';
 import '../detailScreen/VisitedWidget.dart';
-import '../detailScreen/DetailCacheUtil.dart';
+import '../favoriteOrVisitedScreen.dart';
 import 'custom_icons.dart';
-import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import '../database_helpers.dart';
+
 
 
 class DetailWidget extends StatefulWidget {

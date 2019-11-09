@@ -1,4 +1,6 @@
 import '../database_helpers.dart';
+import '../model/Destination.dart';
+import '../model/DestinationSimple.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'dart:convert';
@@ -82,7 +84,7 @@ Future<Destination> getDetailsOfDestination(int destID) async {
   if (LOCALHOST)
     host = "localhost:5000";
   else
-    host = "http://tripideas.heroku.com/";
+    host = "http://tripideas.heroku.com";
   String url = 'http://' + host + '/destination/?id=' + destID.toString();
   // GET REQUEST
   var response = await http.get(url); // sample info available in response
