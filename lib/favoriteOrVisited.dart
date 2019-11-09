@@ -23,7 +23,7 @@ class FavoriteOrVisitedListState extends State<FavoriteOrVisitedList> {
     this.type = t;
   }
 
-  List<FavoriteOrVisited> _favoritesOrVisiteds = new List<FavoriteOrVisited>();
+  List<DestinationSimple> _favoritesOrVisiteds = new List<DestinationSimple>();
 
   @override
   void initState() {
@@ -32,7 +32,7 @@ class FavoriteOrVisitedListState extends State<FavoriteOrVisitedList> {
   }
 
   void _populateList() {
-    _favoritesOrVisiteds = new List<FavoriteOrVisited>();
+    _favoritesOrVisiteds = new List<DestinationSimple>();
     DatabaseHelper helper = DatabaseHelper.instance;
     if(type==FavOrVisEnum.favorite) {
       helper.queryAllFavorites().then((favorites) => setState(() {
@@ -50,7 +50,7 @@ class FavoriteOrVisitedListState extends State<FavoriteOrVisitedList> {
     setState(() {
       _deleteFavOrVis(_favoritesOrVisiteds[index]);
       _favoritesOrVisiteds.removeAt(index);
-      if (_favoritesOrVisiteds == null) _favoritesOrVisiteds = new List<FavoriteOrVisited>();
+      if (_favoritesOrVisiteds == null) _favoritesOrVisiteds = new List<DestinationSimple>();
     });
   }
 
@@ -87,7 +87,7 @@ class FavoriteOrVisitedListState extends State<FavoriteOrVisitedList> {
               ));
   }
 
-  _deleteFavOrVis(FavoriteOrVisited fv) async {
+  _deleteFavOrVis(DestinationSimple fv) async {
     DatabaseHelper helper = DatabaseHelper.instance;
     if(type == FavOrVisEnum.favorite) {
       await helper.deleteFavorite(fv.id);

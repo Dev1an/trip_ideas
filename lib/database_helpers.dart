@@ -9,10 +9,16 @@ final String columnDestinationCity = 'destination';
 final String columnDestinationCountry = 'country';
 final String columnLocation = 'location';
 final String columnDescription = 'description';
+final String columnOtherImages = 'otherimages';
+final String columnScoreBeach = 'scorebeach';
+final String columnScoreNature = 'scorenature';
+final String columnScoreCulture = 'scoreculture';
+final String columnScoreShopping = 'scoreshopping';
+final String columnScoreNightlife = 'scorenightlife';
 
 final String tableFavorites = 'favorites';
-
 final String tableVisited = 'visited';
+final String tableShown = 'shown';
 
 // data model class
 class Destination {
@@ -22,6 +28,12 @@ class Destination {
   String country;
   String location;
   String description;
+  String otherImagesJSON;
+  int scoreBeach;
+  int scoreNature;
+  int scoreCulture;
+  int scoreShopping;
+  int scoreNightlife;
 
   Destination();
 
@@ -32,6 +44,12 @@ class Destination {
     country = map[columnDestinationCountry];
     location = map[columnLocation];
     description = map[columnDescription];
+    otherImagesJSON = map[columnOtherImages];
+    scoreBeach = map[columnScoreBeach];
+    scoreNature = map[columnScoreNature];
+    scoreCulture = map[columnScoreCulture];
+    scoreShopping = map[columnScoreShopping];
+    scoreNightlife = map[columnScoreNightlife];
   }
 
   // convenience method to create a Map from this Destination object
@@ -40,7 +58,13 @@ class Destination {
       columnDestinationCity: destination,
       columnDestinationCountry: country,
       columnLocation: location,
-      columnDescription: description
+      columnDescription: description,
+      columnOtherImages: otherImagesJSON,
+      columnScoreBeach: scoreBeach,
+      columnScoreNature: scoreNature,
+      columnScoreCulture: scoreCulture,
+      columnScoreShopping: scoreShopping,
+      columnScoreNightlife: scoreNightlife
     };
     if (id != null) {
       map[columnId] = id;
@@ -49,22 +73,22 @@ class Destination {
   }
 }
 
-class FavoriteOrVisited {
+class DestinationSimple {
 
   int id;
   String destination;
   String country;
 
-  FavoriteOrVisited();
+  DestinationSimple();
 
-  // convenience constructor to create a Favorite object from a Map
-  FavoriteOrVisited.fromMap(Map<String, dynamic> map) {
+  // convenience constructor to create a DestinationSimple object from a Map
+  DestinationSimple.fromMap(Map<String, dynamic> map) {
     id = map[columnId];
     destination = map[columnDestinationCity];
     country = map[columnDestinationCountry];
   }
 
-  // convenience method to create a Map from this Favorite object
+  // convenience method to create a Map from this DestinationSimple object
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{
       columnDestinationCity: destination,
@@ -102,15 +126,11 @@ class DatabaseHelper {
   // open the database
   _initDatabase() async {
     // The path_provider plugin gets the right directory for Android or iOS.
-    //Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    //String path = join(documentsDirectory.path, _databaseName);
-
     var databasesPath = await getDatabasesPath();
     String path = p.join(databasesPath,_databaseName);
 
 // Make sure the directory exists
     try {
-
       await Directory(databasesPath).create(recursive: true);
     } catch (e) {print(e);}
 
@@ -129,20 +149,32 @@ class DatabaseHelper {
                 $columnDestinationCity TEXT NOT NULL,
                 $columnDestinationCountry TEXT NOT NULL,
                 $columnLocation TEXT NOT NULL,
-                $columnDescription TEXT NOT NULL
+                $columnDescription TEXT NOT NULL,
+                $columnOtherImages TEXT NOT NULL,
+                $columnScoreBeach INTEGER NOT NULL,
+                $columnScoreNature INTEGER NOT NULL,
+                $columnScoreCulture INTEGER NOT NULL,
+                $columnScoreShopping INTEGER NOT NULL,
+                $columnScoreNightlife INTEGER NOT NULL
               )
               ''');
     await db.execute('''
        CREATE TABLE $tableFavorites (
         $columnId INTEGER PRIMARY KEY,
         $columnDestinationCity TEXT NOT NULL,
-        $columnDestinationCountry TEXT NOT NULL
+        $columnDestinationCountry TEXT
        )''');
     await db.execute('''
        CREATE TABLE $tableVisited (
         $columnId INTEGER PRIMARY KEY,
         $columnDestinationCity TEXT NOT NULL,
-        $columnDestinationCountry TEXT NOT NULL
+        $columnDestinationCountry TEXT
+       )''');
+    await db.execute('''
+       CREATE TABLE $tableShown (
+        $columnId INTEGER PRIMARY KEY,
+        $columnDestinationCity TEXT NOT NULL,
+        $columnDestinationCountry TEXT
        )''');
   }
 
@@ -156,10 +188,13 @@ class DatabaseHelper {
   }
 
   // QUERY DESTINATION
-  Future<Destination> queryDestination(int id) async {
+  Future<Destination> readDestination(int id) async {
+    print('queryDestination with id '+id.toString());
     Database db = await database;
     List<Map> maps = await db.query(tableDestinations,
-        columns: [columnId, columnDestinationCity, columnDestinationCountry,columnLocation,columnDescription],
+        columns: [columnId, columnDestinationCity, columnDestinationCountry,
+          columnLocation,columnDescription,columnOtherImages,
+          columnScoreBeach,columnScoreNature,columnScoreCulture,columnScoreShopping,columnScoreNightlife],
         where: '$columnId = ?',
         whereArgs: [id]);
     if (maps.length > 0) {
@@ -168,63 +203,65 @@ class DatabaseHelper {
     return null;
   }
 
-  // CHECK IF EXISTS
-  Future<bool> checkIfExistsDestination(int id) async {
-    Database db = await database;
-    List<Map> maps = await db.query(tableDestinations,
-        columns: [columnId],
-        where: '$columnId = ?',
-        whereArgs: [id]);
-    if (maps.length > 0) {
-      return true;
-    }
-    return false;
-  }
+
 
 // TO DO: queryAllDestinations()
 // TO DO: delete(int id)
 // TO DO: update(Destination destination)
 
-  // -------- FAVORITE OR VISITED --------
+  // -------- FAVORITE OR VISITED OR SHOWN --------
   // INSERT
-  Future<int> insertFavorite(FavoriteOrVisited favOrVis) async {
-    return insertFavoriteOrVisited(favOrVis, tableFavorites);
+  Future<int> insertFavorite(DestinationSimple fav) async {
+    return _insertDestinationSimpleInTable(fav, tableFavorites);
   }
 
-  Future<int> insertVisited(FavoriteOrVisited favOrVis) async {
-    return insertFavoriteOrVisited(favOrVis, tableVisited);
+  Future<int> insertVisited(DestinationSimple vis) async {
+    return _insertDestinationSimpleInTable(vis, tableVisited);
   }
 
-  Future<int> insertFavoriteOrVisited(FavoriteOrVisited favOrVis, String table) async {
+  Future<int> insertShown(DestinationSimple shown) async {
+    return _insertDestinationSimpleInTable(shown, tableShown);
+  }
+
+  Future<int> _insertDestinationSimpleInTable(DestinationSimple destSimple, String table) async {
     Database db = await database;
-    int id = await db.insert(table, favOrVis.toMap());
+    int id = await db.insert(table, destSimple.toMap());
     return id;
   }
 
   // DELETE
   Future<int> deleteFavorite(int id) async {
-    return deleteFavoriteOrVisited(id, tableFavorites);
+    return _deleteDestinationSimpleInTable(id, tableFavorites);
   }
 
   Future<int> deleteVisited(int id) async {
-    return deleteFavoriteOrVisited(id, tableVisited);
+    return _deleteDestinationSimpleInTable(id, tableVisited);
   }
 
-  Future<int> deleteFavoriteOrVisited(int id,String table) async {
+  Future<int> deleteShown(int id) async {
+    return _deleteDestinationSimpleInTable(id, tableShown);
+  }
+
+  Future<int> _deleteDestinationSimpleInTable(int id,String table) async {
     Database db = await database;
     return await db.delete(table, where: '$columnId = ?', whereArgs: [id]);
   }
 
   // CHECK IF EXISTS
   Future<bool> checkIfExistsFavorite(int id) async {
-    return checkIfExists(id, tableFavorites);
+    return _checkIfExistsInTable(id, tableFavorites);
   }
 
   Future<bool> checkIfExistsVisited(int id) async {
-    return checkIfExists(id, tableVisited);
+    return _checkIfExistsInTable(id, tableVisited);
   }
 
-  Future<bool> checkIfExists(int id, String table) async {
+  Future<bool> checkIfExistsDestination(int id) async {
+    return _checkIfExistsInTable(id, tableDestinations);
+  }
+
+
+  Future<bool> _checkIfExistsInTable(int id, String table) async {
     Database db = await database;
     List<Map> maps = await db.query(table,
         columns: [columnId],
@@ -237,18 +274,22 @@ class DatabaseHelper {
   }
 
   // QUERY ALL
-  Future<List<FavoriteOrVisited>> queryAllFavorites() async {
-    return queryAllFavoriteOrVisited(tableFavorites);
+  Future<List<DestinationSimple>> queryAllFavorites() async {
+    return _queryAllDestinationSimpleInTable(tableFavorites);
   }
-  Future<List<FavoriteOrVisited>> queryAllVisited() async {
-    return queryAllFavoriteOrVisited(tableVisited);
+  Future<List<DestinationSimple>> queryAllVisited() async {
+    return _queryAllDestinationSimpleInTable(tableVisited);
   }
 
-  Future<List<FavoriteOrVisited>> queryAllFavoriteOrVisited(String table) async {
+  Future<List<DestinationSimple>> queryAllShown() async {
+    return _queryAllDestinationSimpleInTable(tableShown);
+  }
+
+  Future<List<DestinationSimple>> _queryAllDestinationSimpleInTable(String table) async {
     Database db = await database;
     List<Map> maps = await db.query(table); //SELECT *
     if (maps.length > 0) {
-      return maps.map((favOrVis) => FavoriteOrVisited.fromMap(favOrVis)).toList();
+      return maps.map((favOrVis) => DestinationSimple.fromMap(favOrVis)).toList();
     }
     return null;
   }

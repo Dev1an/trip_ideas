@@ -129,7 +129,7 @@ class Bubbles extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => DetailWidget(destID: 1)),
+                MaterialPageRoute(builder: (context) => DetailWidget(destID: 52)),
               );
             }
         )

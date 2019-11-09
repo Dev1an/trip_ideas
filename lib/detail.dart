@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'favoriteOrVisited.dart';
 import 'custom_icons.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'database_helpers.dart';
@@ -19,7 +20,7 @@ class DetailWidget extends StatefulWidget {
 }
 
 class _DetailWidgetState extends State<DetailWidget> {
-  static const int PHOTOS_AMOUNT = 5;
+  static const int PHOTOS_AMOUNT = 2;
   int currentDestID;
 
   _DetailWidgetState(int destID) {
@@ -55,22 +56,25 @@ class _DetailWidgetState extends State<DetailWidget> {
     });
   }
 
-  Future<List<String>> photoUrls;
+  //Future<List<String>> photoUrls;
+  List<String> photoUrls = ["",""];
   int calledBuild = 0;
 
   // The DETAIL build method
   @override
   Widget build(BuildContext context) {
     calledBuild++;
-    if (calledBuild == 2 && currentDestination !=null &&currentDestination.destination!="")
+    if (calledBuild == 3 && currentDestination !=null &&currentDestination.destination!="")
       // Only called once (i.e. not when FavoriteWidget invokes setState)
-      photoUrls = getImageUrls(currentDestination.destination);
+      //photoUrls = getImageUrls(currentDestination.destination);
+      photoUrls = json.decode(currentDestination.otherImagesJSON).cast<String>().toList();
 
     // Image carousel
     Widget photoSection = new Container(
       child: new Swiper(
         itemBuilder: (BuildContext context, int index) {
-          return FutureBuilder(
+          return Image.network(photoUrls.elementAt(index));
+         /* return FutureBuilder(
             future: photoUrls,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
@@ -85,7 +89,7 @@ class _DetailWidgetState extends State<DetailWidget> {
                 ));
               }
             },
-          );
+          );*/
         },
         itemCount: PHOTOS_AMOUNT,
         viewportFraction: 0.8,
@@ -163,10 +167,11 @@ class _DetailWidgetState extends State<DetailWidget> {
       //Creates even space between each item and their parent container
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
-        _buildCharacteristicContainer(CustomIcons.theater, "Theaters", Color(0xffD2E0E1)),
-        _buildCharacteristicContainer(CustomIcons.sport, "Sports", Color(0xffFEF1D0)),
-        _buildCharacteristicContainer(CustomIcons.park, "Parks", Color(0xffE3F579)),
-        _buildCharacteristicContainer(Icons.account_balance, "Musea", Color(0xffF4C2C2))
+        _buildCharacteristicContainer(Icons.beach_access, "Beach", Color(0xff81D4FA),currentDestination.scoreBeach),
+        _buildCharacteristicContainer(CustomIcons.forrest, "Nature", Color(0xffA5D6A7),currentDestination.scoreNature),
+        _buildCharacteristicContainer(CustomIcons.theater, "Culture", Color(0xffFFEB3B),currentDestination.scoreCulture),
+        _buildCharacteristicContainer(CustomIcons.shopping, "Shopping", Color(0xffFFB74D),currentDestination.scoreShopping),
+        _buildCharacteristicContainer(CustomIcons.party, "Nightlife", Color(0xffCE93D8),currentDestination.scoreNightlife),
       ],
     );
 
@@ -208,21 +213,20 @@ class _DetailWidgetState extends State<DetailWidget> {
 
   //=============== HELPER METHODS ===================
 
-  Container _buildCharacteristicContainer(IconData icon, String text, Color color) {
-    return Container(
-        width: 80.0,
-        height: 80.0,
-        decoration: new BoxDecoration(
-          color: color,
-          shape: BoxShape.circle,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[Icon(icon,color: Colors.black45,),
-                Text(text,style:TextStyle(color: Colors.black45)),
-                Text('5',style: TextStyle(color: Colors.black45, fontSize: 18),)],
-        )
+  CircularPercentIndicator _buildCharacteristicContainer(IconData icon, String text, Color color, int score) {
+    double percent = (score.toDouble() / 100);
+    return CircularPercentIndicator(
+      radius: 60.0,
+      lineWidth: 3.0,
+      percent: percent,
+      center: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[Icon(icon,color: Colors.black45,),
+          Text(text,style:TextStyle(fontSize: 10.0, color: Colors.black45))],
+      ),
+      backgroundColor: Colors.white12,
+      progressColor: color,
     );
   }
 
@@ -285,15 +289,16 @@ class _DetailWidgetState extends State<DetailWidget> {
     return list;
   }
 
+
   // Helper method to read from database
   Future<Destination> _readDestinationFromCache(int destID) async {
     DatabaseHelper helper = DatabaseHelper.instance;
-    Destination dest = await helper.queryDestination(destID);
+    Destination dest = await helper.readDestination(destID);
     if (dest == null) {
       print('read row $destID: empty');
       return null;
     } else {
-      print('read row $destID: ${dest.destination} ${dest.country}');
+      print('found in cache: $destID: ${dest.destination} ${dest.country} ${dest.otherImagesJSON} ');
       return dest;
     }
   }
@@ -306,7 +311,7 @@ class _DetailWidgetState extends State<DetailWidget> {
 
   _addFavorite(Destination dest) async {
     DatabaseHelper helper = DatabaseHelper.instance;
-    FavoriteOrVisited fv = new FavoriteOrVisited();
+    DestinationSimple fv = new DestinationSimple();
     fv.id = dest.id;
     fv.destination = dest.destination;
     fv.country = dest.country;
@@ -316,7 +321,7 @@ class _DetailWidgetState extends State<DetailWidget> {
 
   _addVisited(Destination dest) async {
     DatabaseHelper helper = DatabaseHelper.instance;
-    FavoriteOrVisited fv = new FavoriteOrVisited();
+    DestinationSimple fv = new DestinationSimple();
     fv.id = dest.id;
     fv.destination = dest.destination;
     fv.country = dest.country;
@@ -344,30 +349,14 @@ class _DetailWidgetState extends State<DetailWidget> {
     return exists;
   }
 
-  _initializeDestinationDB() async {
+  Future<bool> _checkIfVisited(Destination dest) async {
     DatabaseHelper helper = DatabaseHelper.instance;
-    Destination dest = new Destination();
-    dest.destination = "Paris";
-    dest.country = "France";
-    dest.location = "48.8566° N, 2.3522° E";
-    dest.description = "Paris offers the largest concentration of tourist attractions in France, and possibly in Europe."+
-                      "Besides some of the world\'s most famous musuems, its has a vibrant historic city centre, a beautiful "+
-                      "riverscape, an extensive range of historic monuments, including cathedrals, chapels and palaces, plus "+
-                      "one of the most famous nightlife scenes in the world. Paris is also famous for its cafés and "+
-                      "restaurants, its theatres and cinemas, and its general ambiance.";
-    await helper.insertDestination(dest);
-    dest = new Destination();
-    dest.destination = "Barcelona";
-    dest.location = "41.3851° N, 2.1734° E";
-    dest.country = "Spain";
-    dest.description = "Barcelona is a city of contrasts: it's Catalan and Spanish, traditional "+
-                        "and modern, and exciting and laid-back, all at the same time. But it's "+
-                        "this perfect harmony that makes Spain's second-largest city fascinating "+
-                        "enough to draw around 32 million tourists every year. As one of Europe's "+
-                        "chicest cities, home to no shortage of things to see and do, it's important "+
-                        "to make every second count while in Barcelona.";
-    await helper.insertDestination(dest);
+    bool exists = await helper.checkIfExistsVisited(dest.id);
+    print(exists ? dest.destination+" is visited": dest.destination+" is not visited");
+
+    return exists;
   }
+
 
   _loadDetailsOfCurrent() {
     // set dummy values of placeholder destination
@@ -375,22 +364,23 @@ class _DetailWidgetState extends State<DetailWidget> {
     currentDestination.description="";
     currentDestination.location="";
     currentDestination.country="";
+    currentDestination.otherImagesJSON = "";
+    currentDestination.scoreBeach = 0;
+    currentDestination.scoreNature = 0;
+    currentDestination.scoreCulture = 0;
+    currentDestination.scoreShopping = 0;
+    currentDestination.scoreNightlife = 0;
 
-    /*
-    _readDestination(currentDestID).then((destination) =>
-        _checkIfFavorite(destination).then((exists) =>
-            setState(() {
-              currentDestination = destination;
-              _favorite = exists;
-            })));
-
-     */
     _getDetailsOfDestination(currentDestID).then((destination) =>
-        _checkIfFavorite(destination).then((exists) =>
-            setState(() {
-              currentDestination = destination;
-              _favorite = exists;
-            })
+        _checkIfFavorite(destination).then((isFavorite) =>
+            _checkIfVisited(destination).then((isVisited) =>
+                setState(() {
+                  currentDestination = destination;
+                  _favorite = isFavorite;
+                  _visited = isVisited;
+                })
+            )
+
         )
     );
 
@@ -418,14 +408,22 @@ class _DetailWidgetState extends State<DetailWidget> {
     if(statusCode == HttpStatus.ok) {
       var data = json.decode(response.body);
       print(data);
-      var raw_destination = data['MESSAGE'];
+      var raw_destination = data[0];
       destination =  new Destination();
       destination.id = destID;
-      destination.country = raw_destination['country'];
-      destination.destination = raw_destination['destination'];
-      destination.description = raw_destination['description'];
-      destination.location = raw_destination['location'];
-
+      destination.country = raw_destination['Country'];
+      destination.destination = raw_destination['Destination'];
+      destination.description = raw_destination['Description'];
+      destination.location = raw_destination['Location'];
+      String images = raw_destination['Other images'];
+      List<String> imagesList = images.substring(1,images.length-1).split("1");
+      imagesList.add(raw_destination['Front image']);
+      destination.otherImagesJSON = jsonEncode(imagesList);
+      destination.scoreBeach = raw_destination['Beach score'];
+      destination.scoreNature = raw_destination['Nature score'];
+      destination.scoreCulture = raw_destination['Culture score'];
+      destination.scoreShopping = raw_destination['Shopping score'];
+      destination.scoreNightlife = raw_destination['Nightlife score'];
       // ADD TO CACHE
       _addDestinationToCache(destination);
 
@@ -440,7 +438,7 @@ class _DetailWidgetState extends State<DetailWidget> {
   void _getRecommendationsDEBUG() async {
 
     var url = "http://localhost:5000/recommendations/";
-    var resp = await http.post(url, body: {'parks':'as much as possible','theaters':'none'});
+    var resp = await http.post(url, body: {'preferences':'[70, 90, 20, 0, 5, 0, 0, 10]','removed':'[1,2,3]'});
     //print('Response status: ${resp.statusCode}');
     print('Response body: ${resp.body}');
 
