@@ -5,7 +5,7 @@ import 'package:bubble_chart/bubble_chart.dart';
 import 'package:trip_ideas/bubbleScreen/BubbleData.dart';
 import 'package:trip_ideas/bubbleScreen/MockData.dart';
 import 'package:trip_ideas/bubbleScreen/Parameters.dart';
-import '../detail.dart';
+import '../detailScreen/detail.dart';
 
 class BubbleScreenState extends State<BubbleScreen> {
   final List<DestinationBubbleData> data = [];

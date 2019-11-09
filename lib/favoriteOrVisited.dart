@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trip_ideas/database_helpers.dart';
-import 'package:trip_ideas/detail.dart';
+import 'package:trip_ideas/detailScreen/detail.dart';
 
 enum FavOrVisEnum {
   favorite,

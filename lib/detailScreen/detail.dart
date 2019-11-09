@@ -1,15 +1,15 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'favoriteOrVisited.dart';
+import '../favoriteOrVisited.dart';
+import '../detailScreen/FavoriteWidget.dart';
+import '../detailScreen/VisitedWidget.dart';
+import '../detailScreen/DetailCacheUtil.dart';
 import 'custom_icons.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'database_helpers.dart';
+import '../database_helpers.dart';
 
-const bool LOCALHOST  = true; // Use localhost or Heroku for details lookup
 
 class DetailWidget extends StatefulWidget {
   final int destID;
@@ -41,8 +41,8 @@ class _DetailWidgetState extends State<DetailWidget> {
   void _handleFavoriteChanged(bool newValue) {
     setState(() {
       _favorite = newValue;
-      if(_favorite) _addFavorite(currentDestination);
-      else _deleteFavorite(currentDestination);
+      if(_favorite) addFavorite(currentDestination);
+      else deleteFavorite(currentDestination);
     });
   }
 
@@ -51,8 +51,8 @@ class _DetailWidgetState extends State<DetailWidget> {
   void _handleVisitedChanged(bool newValue) {
     setState(() {
       _visited = newValue;
-      if(_visited) _addVisited(currentDestination);
-      else _deleteVisited(currentDestination);
+      if(_visited) addVisited(currentDestination);
+      else deleteVisited(currentDestination);
     });
   }
 
@@ -289,75 +289,6 @@ class _DetailWidgetState extends State<DetailWidget> {
     return list;
   }
 
-
-  // Helper method to read from database
-  Future<Destination> _readDestinationFromCache(int destID) async {
-    DatabaseHelper helper = DatabaseHelper.instance;
-    Destination dest = await helper.readDestination(destID);
-    if (dest == null) {
-      print('read row $destID: empty');
-      return null;
-    } else {
-      print('found in cache: $destID: ${dest.destination} ${dest.country} ${dest.otherImagesJSON} ');
-      return dest;
-    }
-  }
-
-  _addDestinationToCache(Destination dest) async {
-    DatabaseHelper helper = DatabaseHelper.instance;
-    await helper.insertDestination(dest);
-    print('inserted '+dest.destination+' in cache');
-  }
-
-  _addFavorite(Destination dest) async {
-    DatabaseHelper helper = DatabaseHelper.instance;
-    DestinationSimple fv = new DestinationSimple();
-    fv.id = dest.id;
-    fv.destination = dest.destination;
-    fv.country = dest.country;
-    await helper.insertFavorite(fv);
-    print('inserted '+dest.destination+' as favorite');
-  }
-
-  _addVisited(Destination dest) async {
-    DatabaseHelper helper = DatabaseHelper.instance;
-    DestinationSimple fv = new DestinationSimple();
-    fv.id = dest.id;
-    fv.destination = dest.destination;
-    fv.country = dest.country;
-    int id = await helper.insertVisited(fv);
-    print('inserted visited row: $id');
-  }
-
-  _deleteFavorite(Destination dest) async {
-    DatabaseHelper helper = DatabaseHelper.instance;
-    await helper.deleteFavorite(dest.id);
-    print('deleted '+dest.destination+" as favorite");
-  }
-
-  _deleteVisited(Destination dest) async {
-    DatabaseHelper helper = DatabaseHelper.instance;
-    await helper.deleteVisited(dest.id);
-    print('deleted '+dest.destination+" as visited");
-  }
-
-  Future<bool> _checkIfFavorite(Destination dest) async {
-    DatabaseHelper helper = DatabaseHelper.instance;
-    bool exists = await helper.checkIfExistsFavorite(dest.id);
-    print(exists ? dest.destination+" is favorite": dest.destination+" is not favorite");
-
-    return exists;
-  }
-
-  Future<bool> _checkIfVisited(Destination dest) async {
-    DatabaseHelper helper = DatabaseHelper.instance;
-    bool exists = await helper.checkIfExistsVisited(dest.id);
-    print(exists ? dest.destination+" is visited": dest.destination+" is not visited");
-
-    return exists;
-  }
-
-
   _loadDetailsOfCurrent() {
     // set dummy values of placeholder destination
     currentDestination.destination="";
@@ -371,9 +302,9 @@ class _DetailWidgetState extends State<DetailWidget> {
     currentDestination.scoreShopping = 0;
     currentDestination.scoreNightlife = 0;
 
-    _getDetailsOfDestination(currentDestID).then((destination) =>
-        _checkIfFavorite(destination).then((isFavorite) =>
-            _checkIfVisited(destination).then((isVisited) =>
+    getDetailsOfDestination(currentDestID).then((destination) =>
+        checkIfFavorite(destination).then((isFavorite) =>
+            checkIfVisited(destination).then((isVisited) =>
                 setState(() {
                   currentDestination = destination;
                   _favorite = isFavorite;
@@ -387,53 +318,6 @@ class _DetailWidgetState extends State<DetailWidget> {
     //_getRecommendationsDEBUG();
   }
 
-  Future<Destination> _getDetailsOfDestination(int destID) async {
-    // CHECK IF AVAILABLE IN CACHE
-    DatabaseHelper helper = DatabaseHelper.instance;
-    bool exists = await helper.checkIfExistsDestination(destID);
-    if (exists) return _readDestinationFromCache(destID);
-
-    // NOT IN CACHE
-    Destination destination = new Destination();
-    // URL
-    String host;
-    if(LOCALHOST) host="localhost:5000";
-    else host="http://tripideas.heroku.com/";
-    String url = 'http://'+host+'/destination/?id='+destID.toString();
-    // GET REQUEST
-    var response = await http.get(url);  // sample info available in response
-
-    // PARSE RESPONSE
-    int statusCode = response.statusCode;
-    if(statusCode == HttpStatus.ok) {
-      var data = json.decode(response.body);
-      print(data);
-      var raw_destination = data[0];
-      destination =  new Destination();
-      destination.id = destID;
-      destination.country = raw_destination['Country'];
-      destination.destination = raw_destination['Destination'];
-      destination.description = raw_destination['Description'];
-      destination.location = raw_destination['Location'];
-      String images = raw_destination['Other images'];
-      List<String> imagesList = images.substring(1,images.length-1).split("1");
-      imagesList.add(raw_destination['Front image']);
-      destination.otherImagesJSON = jsonEncode(imagesList);
-      destination.scoreBeach = raw_destination['Beach score'];
-      destination.scoreNature = raw_destination['Nature score'];
-      destination.scoreCulture = raw_destination['Culture score'];
-      destination.scoreShopping = raw_destination['Shopping score'];
-      destination.scoreNightlife = raw_destination['Nightlife score'];
-      // ADD TO CACHE
-      _addDestinationToCache(destination);
-
-      return destination;
-    } else {
-      // ?
-    }
-
-    return destination;
-  }
 
   void _getRecommendationsDEBUG() async {
 
@@ -445,93 +329,3 @@ class _DetailWidgetState extends State<DetailWidget> {
   }
 
 }
-
-class FavoriteWidget extends StatelessWidget {
-  FavoriteWidget({Key key, this.favorite: false, @required this.onChanged})
-      : super(key: key);
-
-  final bool favorite;
-  final ValueChanged<bool> onChanged;
-
-  void _handleTap() {
-    onChanged(!favorite);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    Color color = Theme.of(context).primaryColor;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          margin: const EdgeInsets.only(top: 0),
-          padding: EdgeInsets.all(0),
-          child: IconButton(
-            icon:
-                (favorite ? Icon(Icons.favorite) : Icon(Icons.favorite_border)),
-            color: color,
-            onPressed: _handleTap,
-          ),
-        ),
-        Container(
-          margin: const EdgeInsets.only(top: 8),
-          child: Text(
-            'FAVORITE',
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-              color: color,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class VisitedWidget extends StatelessWidget {
-  VisitedWidget({Key key, this.visited: false, @required this.onChanged})
-      : super(key: key);
-
-  final bool visited;
-  final ValueChanged<bool> onChanged;
-
-  void _handleTap() {
-    onChanged(!visited);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    Color color = Theme.of(context).primaryColor;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          margin: const EdgeInsets.only(top: 0),
-          padding: EdgeInsets.all(0),
-          child: IconButton(
-            icon: (visited
-                ? Icon(Icons.check_box)
-                : Icon(Icons.check_box_outline_blank)),
-            color: color,
-            onPressed: _handleTap,
-          ),
-        ),
-        Container(
-          margin: const EdgeInsets.only(top: 8),
-          child: Text(
-            'VISITED',
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-              color: color,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
