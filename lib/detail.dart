@@ -191,10 +191,6 @@ class _DetailWidgetState extends State<DetailWidget> {
                   MaterialPageRoute(builder: (context) => FavoriteOrVisitedList(type: FavOrVisEnum.favorite)),
                 ).then((e) => {_loadDetailsOfCurrent()}); // Refresh on back
               },
-            ),
-            new IconButton(
-              icon: new Icon(Icons.account_circle),
-              onPressed: () {},
             )
           ],
         ),
