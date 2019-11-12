@@ -293,7 +293,7 @@ class _DetailWidgetState extends State<DetailWidget> {
     return list;
   }
 
-  // Helper method to retrieve the distance between the destinaiton location and the current location
+  // Helper method to retrieve the distance between the current location and the destination location
   Future<String> getDistance() async {
     String distanceString = "";
     Position _currentPosition;
@@ -358,7 +358,7 @@ class _DetailWidgetState extends State<DetailWidget> {
   void _getRecommendationsDEBUG() async {
 
     var url = "http://localhost:5000/recommendations/";
-    var resp = await http.post(url, body: {'preferences':'[70, 90, 20, 0, 5, 0, 0, 10]','removed':'[1,2,3]'});
+    var resp = await http.post(url, body: {'preferences':'[70, 90, 20, 0, 5]','removed':'[1,2,3]'});
     //print('Response status: ${resp.statusCode}');
     print('Response body: ${resp.body}');
 
