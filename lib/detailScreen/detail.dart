@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:http/http.dart' as http;
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:geolocator/geolocator.dart';
 
 import '../model/Destination.dart';
 import '../detailScreen/DetailCacheUtil.dart';
@@ -292,6 +293,38 @@ class _DetailWidgetState extends State<DetailWidget> {
     return list;
   }
 
+  // Helper method to retrieve the distance between the destinaiton location and the current location
+  Future<String> getDistance() async {
+    String distanceString = "";
+    Position _currentPosition;
+    final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+
+    geolocator
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+        .then((Position position) {
+      setState(() {
+        _currentPosition = position;
+      });
+    }).catchError((e) {
+      print(e);
+    });
+    
+    final TextEditingController _startCoordinatesTextController =
+      currentDestination.location;
+    final List<String> endCoords =
+        _startCoordinatesTextController.text.split(':');
+    
+    final double startLatitude = _currentPosition.latitude;
+    final double startLongitude = _currentPosition.longitude;
+    final double endLatitude = double.parse(endCoords[0]);
+    final double endLongitude = double.parse(endCoords[1]);
+    final double distance = await Geolocator().distanceBetween(
+        startLatitude, startLongitude, endLatitude, endLongitude);
+    
+    distanceString = "$distance km";
+    return distanceString;
+  }
+  
   _loadDetailsOfCurrent() {
     // set dummy values of placeholder destination
     currentDestination.destination="";
