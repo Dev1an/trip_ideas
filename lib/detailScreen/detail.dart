@@ -309,10 +309,7 @@ class _DetailWidgetState extends State<DetailWidget> {
       print(e);
     });
     
-    final TextEditingController _startCoordinatesTextController =
-      currentDestination.location;
-    final List<String> endCoords =
-        _startCoordinatesTextController.text.split(':');
+    final List<String> endCoords = currentDestination.location.split(':');
     
     final double startLatitude = _currentPosition.latitude;
     final double startLongitude = _currentPosition.longitude;
