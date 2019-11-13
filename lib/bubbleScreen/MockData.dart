@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:csv/csv.dart';
 import 'package:flutter/services.dart';
 import 'package:trip_ideas/bubbleScreen/BubbleData.dart';

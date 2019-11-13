@@ -136,29 +136,32 @@ class Bubbles extends StatelessWidget {
     );
   }
   
-  Stack strokedText(String content) {
-    return Stack(
-      children: <Widget>[
-        // Stroked text as border.
-        Text(
-          content,
-          style: TextStyle(
-            fontSize: 20,
-            foreground: Paint()
-              ..style = PaintingStyle.stroke
-              ..strokeWidth = 2
-              ..color = Colors.grey[900],
+  FittedBox strokedText(String content) {
+    return FittedBox(
+      fit: BoxFit.fitWidth,
+      child: Stack(
+        children: <Widget>[
+          // Stroked text as border.
+          Text(
+            content,
+            style: TextStyle(
+              fontSize: 20,
+              foreground: Paint()
+                ..style = PaintingStyle.stroke
+                ..strokeWidth = 2
+                ..color = Colors.grey[900],
+            ),
           ),
-        ),
-        // Solid text as fill.
-        Text(
-          content,
-          style: TextStyle(
-            fontSize: 20,
-            color: Colors.grey[100],
+          // Solid text as fill.
+          Text(
+            content,
+            style: TextStyle(
+              fontSize: 20,
+              color: Colors.grey[100],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
