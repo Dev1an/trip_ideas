@@ -102,9 +102,14 @@ Future<Destination> getDetailsOfDestination(int destID) async {
     destination.description = raw_destination['Description'];
     destination.location = raw_destination['Location'];
     String images = raw_destination['Other images'];
-    List<String> imagesList = images.substring(1, images.length - 1).split("1");
+    List<String> imagesList = images.substring(1, images.length - 1).split(", ");
+    print("FUCKING BEFORE");
+    print(imagesList);
+    imagesList = imagesList.map((i) => i.substring(1,i.length-1)).toList();
+    print("FUCKING AFTER");
+    print(imagesList);
     imagesList.add(raw_destination['Front image']);
-    destination.otherImagesJSON = jsonEncode(imagesList);
+    destination.otherImagesJSON = imagesList.toString();
     destination.scoreBeach = raw_destination['Beach score'];
     destination.scoreNature = raw_destination['Nature score'];
     destination.scoreCulture = raw_destination['Culture score'];

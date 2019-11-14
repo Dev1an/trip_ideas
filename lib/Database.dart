@@ -72,7 +72,7 @@ class DatabaseHelper {
               CREATE TABLE $tableDestinations (
                 $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
                 $columnDestinationCity TEXT NOT NULL,
-                $columnDestinationCountry TEXT NOT NULL,
+                $columnDestinationCountry TEXT,
                 $columnLocation TEXT NOT NULL,
                 $columnDescription TEXT NOT NULL,
                 $columnOtherImages TEXT NOT NULL,

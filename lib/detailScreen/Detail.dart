@@ -29,7 +29,7 @@ class _DetailWidgetState extends State<DetailWidget> {
     this.currentDestID = destID;
   }
 
-  static const int PHOTOS_AMOUNT = 2;
+  int PHOTOS_AMOUNT = 1;
   int currentDestID;
   Destination currentDestination = new Destination();
   String distanceField = "- km";
@@ -69,11 +69,16 @@ class _DetailWidgetState extends State<DetailWidget> {
   @override
   Widget build(BuildContext context) {
     calledBuild++;
-    if (calledBuild == 3 && currentDestination !=null &&currentDestination.destination!="")
+    if (calledBuild == 3 && currentDestination !=null &&currentDestination.destination!=""){
       // Only called once (i.e. not when FavoriteWidget invokes setState)
       //photoUrls = getImageUrls(currentDestination.destination);
-      photoUrls = json.decode(currentDestination.otherImagesJSON).cast<String>().toList();
-
+      photoUrls = currentDestination.otherImagesJSON.substring(1,currentDestination.otherImagesJSON.length-1).split(", ");
+      //photoUrls = temp.map((i) => su);
+      if (photoUrls.length > 1 && photoUrls.length < 6 ) PHOTOS_AMOUNT = photoUrls.length;
+      if (photoUrls.length >= 6) PHOTOS_AMOUNT = 5;
+      if (photoUrls.length <= 1) PHOTOS_AMOUNT = 1;
+      //PHOTOS_AMOUNT = photoUrls.length > PHOTOS_AMOUNT ? PHOTOS_AMOUNT : photoUrls.length;
+    }
     // Image carousel
     Widget photoSection = new Container(
       child: new Swiper(
@@ -356,17 +361,6 @@ class _DetailWidgetState extends State<DetailWidget> {
                 }))
         )}
     );
-
-    _getRecommendationsDEBUG();
-  }
-
-
-  void _getRecommendationsDEBUG() async {
-
-    var url = "http://localhost:5000/recommendations/";
-    var resp = await http.post(url, body: {'preferences':'[70, 90, 20, 0, 5]','removed':'[1,2,3]'});
-    //print('Response status: ${resp.statusCode}');
-    print('Response body: ${resp.body}');
 
   }
 

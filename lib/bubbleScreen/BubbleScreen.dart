@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:bubble_chart/bubble_chart.dart';
 import 'package:trip_ideas/model/BubbleData.dart';
-//import 'package:trip_ideas/bubbleScreen/MockData.dart';
 import 'package:trip_ideas/bubbleScreen/RecommendationUtil.dart';
 import 'package:trip_ideas/model/Parameters.dart';
 import 'package:trip_ideas/model/Destination.dart';
@@ -130,7 +129,7 @@ class Bubbles extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => DetailWidget(destID: 52)),
+                MaterialPageRoute(builder: (context) => DetailWidget(destID: data.id)),
               );
             }
         )
