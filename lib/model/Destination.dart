@@ -1,4 +1,5 @@
-import '../database_helpers.dart';
+import '../Database.dart';
+import 'dart:convert';
 
 /// Class with all the details of a Destination
 class Destination {
@@ -8,6 +9,7 @@ class Destination {
   String country;
   String location;
   String description;
+  String pictureURL; // not directly persisted, but included in otherImagesJSON by DetailCacheUtil
   String otherImagesJSON;
   int scoreBeach;
   int scoreNature;
@@ -50,5 +52,23 @@ class Destination {
       map[columnId] = id;
     }
     return map;
+  }
+
+  // Convert JSON to Destination
+  static Destination parseDestinationFromJSON(Map<String, dynamic> json) {
+    Destination destination = new Destination();
+    destination.id = json['id'];
+    destination.destination = json['Destination'];
+    destination.country = json['Country'];
+    destination.pictureURL = json['Front image'];
+    destination.location = json['Location'];
+    destination.scoreBeach = json['Beach score'];
+    destination.scoreNature = json['Nature score'];
+    destination.scoreCulture = json['Culture score'];
+    destination.scoreShopping = json['Shopping score'];
+    destination.scoreNightlife = json['Nightlife score'];
+
+    return destination;
+
   }
 }

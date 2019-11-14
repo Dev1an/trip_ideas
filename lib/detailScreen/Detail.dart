@@ -24,14 +24,15 @@ class DetailWidget extends StatefulWidget {
 }
 
 class _DetailWidgetState extends State<DetailWidget> {
-  static const int PHOTOS_AMOUNT = 2;
-  int currentDestID;
 
   _DetailWidgetState(int destID) {
     this.currentDestID = destID;
   }
 
+  static const int PHOTOS_AMOUNT = 2;
+  int currentDestID;
   Destination currentDestination = new Destination();
+  String distanceField = "- km";
 
   @override
   void initState() {
@@ -138,7 +139,7 @@ class _DetailWidgetState extends State<DetailWidget> {
             Icons.near_me,
             color: Colors.grey[500],
           ),
-          Text('321km'),
+          Text(distanceField),
         ],
       ),
     );
@@ -294,34 +295,42 @@ class _DetailWidgetState extends State<DetailWidget> {
   }
 
   // Helper method to retrieve the distance between the current location and the destination location
-  Future<String> getDistance() async {
-    String distanceString = "";
-    Position _currentPosition;
-    final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+  void loadPosition() async {
 
+    final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+    print("loading position");
     geolocator
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
-        .then((Position position) {
-      setState(() {
-        _currentPosition = position;
-      });
-    }).catchError((e) {
-      print(e);
+        .then((position) => {
+            getDistanceFromPosition(position).then((dist) => {
+              setState(() {
+                distanceField = dist;
+              })
+            })
+        }).catchError((e) {
+          print(e);
     });
     
+
+  }
+
+  Future<String> getDistanceFromPosition(Position position) async {
+    print("inside get distance from position. Current dest pos: "+ currentDestination.location);
     final List<String> endCoords = currentDestination.location.split(':');
-    
-    final double startLatitude = _currentPosition.latitude;
-    final double startLongitude = _currentPosition.longitude;
+    String distanceString = "";
+    final double startLatitude = position.latitude;
+    final double startLongitude = position.longitude;
     final double endLatitude = double.parse(endCoords[0]);
     final double endLongitude = double.parse(endCoords[1]);
-    final double distance = await Geolocator().distanceBetween(
+    print("my pos:"+startLatitude.toString()+", "+startLongitude.toString()+". Dest pos: "+endLatitude.toString()+", "+endLongitude.toString());
+    double distance = await Geolocator().distanceBetween(
         startLatitude, startLongitude, endLatitude, endLongitude);
-    
-    distanceString = "$distance km";
+
+    int distanceInt = (distance / 1000).round();
+    distanceString = "$distanceInt km";
     return distanceString;
   }
-  
+
   _loadDetailsOfCurrent() {
     // set dummy values of placeholder destination
     currentDestination.destination="";
@@ -335,20 +344,20 @@ class _DetailWidgetState extends State<DetailWidget> {
     currentDestination.scoreShopping = 0;
     currentDestination.scoreNightlife = 0;
 
-    getDetailsOfDestination(currentDestID).then((destination) =>
+
+    getDetailsOfDestination(currentDestID).then((destination) => {
+        loadPosition(),
         checkIfFavorite(destination).then((isFavorite) =>
             checkIfVisited(destination).then((isVisited) =>
                 setState(() {
                   currentDestination = destination;
                   _favorite = isFavorite;
                   _visited = isVisited;
-                })
-            )
-
-        )
+                }))
+        )}
     );
 
-    //_getRecommendationsDEBUG();
+    _getRecommendationsDEBUG();
   }
 
 

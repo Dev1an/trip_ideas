@@ -1,4 +1,4 @@
-import '../database_helpers.dart';
+import '../Database.dart';
 
 /// Light representation of a Destination. Used for Favorites, Visited and Shown.
 class DestinationSimple {

@@ -2,14 +2,16 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:bubble_chart/bubble_chart.dart';
-import 'package:trip_ideas/bubbleScreen/BubbleData.dart';
-import 'package:trip_ideas/bubbleScreen/MockData.dart';
-import 'package:trip_ideas/bubbleScreen/Parameters.dart';
-import '../detailScreen/detail.dart';
+import 'package:trip_ideas/model/BubbleData.dart';
+//import 'package:trip_ideas/bubbleScreen/MockData.dart';
+import 'package:trip_ideas/bubbleScreen/RecommendationUtil.dart';
+import 'package:trip_ideas/model/Parameters.dart';
+import 'package:trip_ideas/model/Destination.dart';
+import '../detailScreen/Detail.dart';
 
 class BubbleScreenState extends State<BubbleScreen> {
   final List<DestinationBubbleData> data = [];
-  List<DestinationBubbleData> selectedDestinations = [];
+  List<Destination> selectedDestinations = [];
   final List<Parameter> parameters = [
     Parameter('Beach', 0.20),
     Parameter('Nature', 0.90),
@@ -17,17 +19,16 @@ class BubbleScreenState extends State<BubbleScreen> {
   ];
 
   BubbleScreenState() {
-    loadCsvData().then((newData) {
-      data.addAll(newData);
-      setState(selectRandomPlaces);
-    });
+    loadRecommendations();
   }
 
-  void selectRandomPlaces() {
-    final random = new Random();
-    final count = random.nextInt(7) + 3;
-    final index = random.nextInt(data.length - count);
-    selectedDestinations = data.sublist(index, index + count);
+  void loadRecommendations() {
+    getRecommendations(parameters).then((destinations) =>
+      setState(() {
+        selectedDestinations = destinations;
+    })
+
+    );
   }
 
   @override
@@ -67,7 +68,7 @@ class BubbleScreenState extends State<BubbleScreen> {
             ],
           ),
           floatingActionButton: FloatingActionButton(child: Icon(Icons.refresh), onPressed: () {
-            setState(selectRandomPlaces);
+            setState(loadRecommendations);
             print("Load bubbles with settings:");
             parameters.forEach((parameter) => print("\t- ${parameter.description}:\t${parameter.value}"));
           },),
@@ -116,16 +117,16 @@ class BubbleScreen extends StatefulWidget {
 }
 
 class Bubbles extends StatelessWidget {
-  final Iterable<DestinationBubbleData> destinations;
+  final Iterable<Destination> destinations;
 
   const Bubbles({Key key, this.destinations}) : super(key: key);
 
-  BubbleNode destinationWidget(DestinationBubbleData data, context) {
+  BubbleNode destinationWidget(Destination data, context) {
     return BubbleNode.leaf(
         value: 5,
         options: BubbleOptions(
-            child: strokedText(data.name),
-            image: NetworkImage(data.pictureUrl),
+            child: strokedText(data.destination),
+            image: NetworkImage(data.pictureURL),
             onTap: () {
               Navigator.push(
                 context,

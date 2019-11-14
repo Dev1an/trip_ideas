@@ -1,4 +1,4 @@
-import '../database_helpers.dart';
+import '../Database.dart';
 import '../model/Destination.dart';
 import '../model/DestinationSimple.dart';
 import 'package:http/http.dart' as http;
@@ -130,7 +130,7 @@ Future<Destination> readDestinationFromCache(int destID) async {
     return null;
   } else {
     print(
-        'found in cache: $destID: ${dest.destination} ${dest.country} ${dest.otherImagesJSON} ');
+        'found in cache: $destID ${dest.destination} ${dest.location} ${dest.otherImagesJSON} ');
     return dest;
   }
 }
