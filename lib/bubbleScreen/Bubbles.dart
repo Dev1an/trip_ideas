@@ -183,7 +183,8 @@ class CirclesState extends State<Circles> with SingleTickerProviderStateMixin {
                                 style: TextStyle(
                                     color: Colors.white,
                                     shadows: [
-                                      Shadow(blurRadius: 5, color: Colors.black)
+                                      Shadow(blurRadius: 3, color: Colors.black),
+                                      Shadow(blurRadius: 7, color: Colors.black)
                                     ],
                                     fontSize: 20
                                 )
