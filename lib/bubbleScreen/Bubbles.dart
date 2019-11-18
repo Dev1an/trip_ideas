@@ -166,9 +166,10 @@ class CirclesState extends State<Circles> with SingleTickerProviderStateMixin {
                   foregroundPainter: ArcPainter(score/100),
                   child: Container(
                     decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.grey,
-                        image: DecorationImage(image: picture, fit: BoxFit.cover)
+                      shape: BoxShape.circle,
+                      color: Colors.grey,
+                      image: DecorationImage(image: picture, fit: BoxFit.cover),
+                      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 10, offset: Offset(0, 7))]
                     ),
                     margin: EdgeInsets.all(5),
                     padding: EdgeInsets.all(10),
@@ -342,7 +343,11 @@ class CirclesState extends State<Circles> with SingleTickerProviderStateMixin {
               heightFactor: 0.2,
               child: GestureDetector(
                 child: Container(
-                  decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.blue),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.blue,
+                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 10, offset: Offset(0, 7))]
+                  ),
                   child: Center(child: Text('more...', style: TextStyle(color: Colors.white))),
                 ),
                 onTap: () {

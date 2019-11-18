@@ -74,24 +74,26 @@ class BubbleScreenState extends State<BubbleScreen> {
             body: Column(
               children: [
                 Flexible(
-                  child: Circles(
-                    bubbles: selectedDestinations,
-                    markFavorite: (index) {print('mark $index as favorite');},
-                    markVisited: (index) {print('mark $index as visited');},
-                    openDetail: (index) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                DetailWidget(destID: selectedDestinations[index].id)
-                        ),
-                      );
-                    },
-                    onRefresh: () {
-                      loadRecommendations();
-                      print("Load bubbles with settings:");
-                      parameters.forEach((parameter) => print("\t- ${parameter.description}:\t${parameter.value}"));
-                    }
+                  child: Builder(
+                    builder: (context) => Circles(
+                      bubbles: selectedDestinations,
+                      markFavorite: (index) {print('mark $index as favorite');},
+                      markVisited: (index) {print('mark $index as visited');},
+                      openDetail: (index) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  DetailWidget(destID: selectedDestinations[index].id)
+                          ),
+                        );
+                      },
+                      onRefresh: () {
+                        loadRecommendations();
+                        print("Load bubbles with settings:");
+                        parameters.forEach((parameter) => print("\t- ${parameter.description}:\t${parameter.value}"));
+                      }
+                    ),
                   )
                 ),
                 Container(
