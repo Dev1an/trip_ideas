@@ -24,10 +24,9 @@ class BubbleScreenState extends State<BubbleScreen> {
 
   void loadRecommendations() {
     getRecommendations(parameters).then((destinations) =>
-      setState(() {
-        selectedDestinations = destinations;
-    })
-
+        setState(() {
+          selectedDestinations = destinations;
+        })
     );
   }
   static String _radioValue1;
@@ -54,44 +53,44 @@ class BubbleScreenState extends State<BubbleScreen> {
     return MaterialApp(
         title: "Trip Ideas",
         home: Scaffold(
-          appBar: AppBar(
-            title: Text('Trip Ideas'),
-            actions: <Widget>[
-              new IconButton(
-                icon: new Icon(Icons.assignment_turned_in),
-                onPressed: () {},
-              ),
-              new IconButton(
-                icon: new Icon(Icons.favorite),
-                onPressed: () {},
-              ),
-              new IconButton(
-                icon: new Icon(Icons.account_circle),
-                onPressed: () {},
-              )
-            ],
-          ),
-          body: Column(
-            children: [
-              Flexible(child: Bubbles(destinations: selectedDestinations)),
-              Container(
-                child: ParameterSliders(
+            appBar: AppBar(
+              title: Text('Trip Ideas'),
+              actions: <Widget>[
+                new IconButton(
+                  icon: new Icon(Icons.assignment_turned_in),
+                  onPressed: () {},
+                ),
+                new IconButton(
+                  icon: new Icon(Icons.favorite),
+                  onPressed: () {},
+                ),
+                new IconButton(
+                  icon: new Icon(Icons.account_circle),
+                  onPressed: () {},
+                )
+              ],
+            ),
+            body: Column(
+              children: [
+                Flexible(child: Bubbles(destinations: selectedDestinations)),
+                Container(
+                  child: ParameterSliders(
                     parameters: parameters,
                     changeCallback: (changeParameter) {
                       setState(changeParameter);
                     },
-                  changeRadioCallback: _handleRadioValueChange,
-                ),
-                padding: EdgeInsets.fromLTRB(0, 0, 0, 40),
-              )
-            ],
-          ),
-          floatingActionButton: FloatingActionButton(child: Icon(Icons.refresh), onPressed: () {
-            setState(loadRecommendations);
-            print("Load bubbles with settings:");
-            parameters.forEach((parameter) => print("\t- ${parameter.description}:\t${parameter.value}"));
-          },),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked)
+                    changeRadioCallback: _handleRadioValueChange,
+                  ),
+                  padding: EdgeInsets.fromLTRB(0, 0, 0, 40),
+                )
+              ],
+            ),
+            floatingActionButton: FloatingActionButton(child: Icon(Icons.refresh), onPressed: () {
+              setState(loadRecommendations);
+              print("Load bubbles with settings:");
+              parameters.forEach((parameter) => print("\t- ${parameter.description}:\t${parameter.value}"));
+            },),
+            floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked)
     );
   }
 }
@@ -173,43 +172,43 @@ class Bubbles extends StatelessWidget {
 
     double percent = (score.toDouble() / 100);
     return Stack(
-        alignment: AlignmentDirectional.center,
-        children: <Widget>[
-          CircularPercentIndicator(
-            animation: true,
-            animationDuration: 200,
-            radius: 154.5,
-            lineWidth: 8.0,
-            percent: percent,
-            center: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[],
-            ),
-            backgroundColor: Colors.white12,
-            progressColor: scoreColor,
+      alignment: AlignmentDirectional.center,
+      children: <Widget>[
+        CircularPercentIndicator(
+          animation: true,
+          animationDuration: 200,
+          radius: 154.5,
+          lineWidth: 8.0,
+          percent: percent,
+          center: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[],
           ),
-          // Stroked text as border.
-          Text(
-            dest.destination,
-            style: TextStyle(
-              fontSize: 20,
-              foreground: Paint()
-                ..style = PaintingStyle.stroke
-                ..strokeWidth = 2
-                ..color = Colors.grey[900],
-            ),
+          backgroundColor: Colors.white12,
+          progressColor: scoreColor,
+        ),
+        // Stroked text as border.
+        Text(
+          dest.destination,
+          style: TextStyle(
+            fontSize: 20,
+            foreground: Paint()
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = 2
+              ..color = Colors.grey[900],
           ),
-          // Solid text as fill.
-          Text(
-            dest.destination,
-            style: TextStyle(
-              fontSize: 20,
-              color: Colors.grey[100],
-            ),
+        ),
+        // Solid text as fill.
+        Text(
+          dest.destination,
+          style: TextStyle(
+            fontSize: 20,
+            color: Colors.grey[100],
           ),
-        ],
-      );
+        ),
+      ],
+    );
 
   }
 
