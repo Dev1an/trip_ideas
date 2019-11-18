@@ -212,7 +212,6 @@ class DatabaseHelper {
     if (maps.length > 0) {
       return maps.map((favOrVis) => DestinationSimple.fromMap(favOrVis)).toList();
     }
-    return null;
+    return [];
   }
-
 }

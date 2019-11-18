@@ -3,7 +3,7 @@ import 'package:trip_ideas/model/Parameters.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-Future<List<Destination>> getRecommendations(List<Parameter> parameters) async {
+Future<List<Destination>> getRecommendations(List<Parameter> parameters, Set<int> favorites) async {
   bool LOCALHOST = true;
   String host;
   if (LOCALHOST)
@@ -16,7 +16,13 @@ Future<List<Destination>> getRecommendations(List<Parameter> parameters) async {
   int cultureScore = (parameters.elementAt(2).value * 100).toInt();
 
   var prefs = [beachScore, natureScore, cultureScore, 0, 5];
-  var resp = await http.post(url, body: {'preferences':prefs.toString(),'removed':'[1,2,3]'});
+  var resp = await http.post(
+    url,
+    body: {
+      'preferences': prefs.toString(),
+      'removed': json.encode(favorites.toList())
+    }
+  );
   //print('Response status: ${resp.statusCode}');
   print('Response body: ${resp.body}');
   String jsonDestinations = resp.body;

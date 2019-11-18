@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trip_ideas/Database.dart';
 import 'package:trip_ideas/detailScreen/Detail.dart';
 import 'package:trip_ideas/model/BubbleData.dart';
 import 'package:trip_ideas/bubbleScreen/RecommendationUtil.dart';
@@ -17,12 +18,19 @@ class BubbleScreenState extends State<BubbleScreen> {
     Parameter('Culture', 0.70)
   ];
 
+  final Set<int> favorites = Set.of([]);
+
   BubbleScreenState() {
     loadRecommendations();
+    DatabaseHelper.instance.queryAllFavorites().then((favorites) {
+      setState(() {
+        this.favorites.addAll(favorites.map((destination) => destination.id));
+      });
+    });
   }
 
   void loadRecommendations() {
-    getRecommendations(parameters).then((destinations) =>
+    getRecommendations(parameters, favorites).then((destinations) =>
         setState(() {
           selectedDestinations.clear();
           selectedDestinations.addAll(destinations);
@@ -51,12 +59,22 @@ class BubbleScreenState extends State<BubbleScreen> {
 
   @override
   Widget build(BuildContext context) {
+    selectedDestinations.forEach((destination) {
+      print('${destination.destination}: ${destination.id}');
+      destination.isFavorite = favorites.contains(destination.id);
+    });
+
     final components = [
       Flexible(
           child: Builder(
             builder: (context) => Circles(
                 bubbles: selectedDestinations,
-                markFavorite: (index) {print('mark $index as favorite');},
+                markFavorite: (index) {
+                  setState(() {
+                    favorites.add(selectedDestinations[index].id);
+                    print('favorites: $favorites');
+                  });
+                },
                 markVisited: (index) {print('mark $index as visited');},
                 openDetail: (index) {
                   Navigator.push(
@@ -75,17 +93,15 @@ class BubbleScreenState extends State<BubbleScreen> {
             ),
           )
       ),
-      Flexible(
-        child: Container(
-          child: ParameterSliders(
-            parameters: parameters,
-            changeCallback: (changeParameter) {
-              setState(changeParameter);
-            },
-            changeRadioCallback: _handleRadioValueChange,
-          ),
-          padding: EdgeInsets.fromLTRB(0, 0, 0, 40),
+      Container(
+        child: ParameterSliders(
+          parameters: parameters,
+          changeCallback: (changeParameter) {
+            setState(changeParameter);
+          },
+          changeRadioCallback: _handleRadioValueChange,
         ),
+        padding: EdgeInsets.fromLTRB(0, 0, 0, 40),
       )
     ];
     return Scaffold(
@@ -106,9 +122,7 @@ class BubbleScreenState extends State<BubbleScreen> {
             )
           ],
         ),
-        body: MediaQuery.of(context).orientation == Orientation.portrait ?
-          Column(children: components) :
-          Row(children: components)
+        body: Column(children: components)
     );
   }
 }

@@ -15,6 +15,8 @@ class Destination {
   int scoreCulture;
   int scoreShopping;
   int scoreNightlife;
+  bool isFavorite = false;
+  bool isVisited = false;
 
   Destination();
 

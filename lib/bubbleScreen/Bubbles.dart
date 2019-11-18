@@ -190,7 +190,7 @@ class CirclesState extends State<Circles> with SingleTickerProviderStateMixin {
                                     fontSize: 20
                                 )
                             ),
-//                            if (data.isFavorite) Icon(Icons.favorite, color: Colors.white),
+                            if (data.isFavorite) Icon(Icons.favorite, color: Colors.white),
 //                            if (data.isVisited) Icon(Icons.assignment_turned_in, color: Colors.white),
                           ],
                         )
