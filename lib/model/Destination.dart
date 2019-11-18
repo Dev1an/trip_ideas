@@ -1,5 +1,4 @@
 import '../Database.dart';
-import 'dart:convert';
 
 /// Class with all the details of a Destination
 class Destination {

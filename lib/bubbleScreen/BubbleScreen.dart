@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trip_ideas/detailScreen/Detail.dart';
 import 'package:trip_ideas/model/BubbleData.dart';
 import 'package:trip_ideas/bubbleScreen/RecommendationUtil.dart';
 import 'package:trip_ideas/model/Parameters.dart';
@@ -9,7 +10,7 @@ import 'Parameters.dart';
 
 class BubbleScreenState extends State<BubbleScreen> {
   final List<DestinationBubbleData> data = [];
-  List<Destination> selectedDestinations = [];
+  final List<Destination> selectedDestinations = [];
   final List<Parameter> parameters = [
     Parameter('Beach', 0.20),
     Parameter('Nature', 0.90),
@@ -23,7 +24,8 @@ class BubbleScreenState extends State<BubbleScreen> {
   void loadRecommendations() {
     getRecommendations(parameters).then((destinations) =>
         setState(() {
-          selectedDestinations = destinations;
+          selectedDestinations.clear();
+          selectedDestinations.addAll(destinations);
         })
     );
   }
@@ -71,7 +73,27 @@ class BubbleScreenState extends State<BubbleScreen> {
             ),
             body: Column(
               children: [
-                Flexible(child: Bubbles(destinations: selectedDestinations)),
+                Flexible(
+                  child: Circles(
+                    bubbles: selectedDestinations,
+                    markFavorite: (index) {print('mark $index as favorite');},
+                    markVisited: (index) {print('mark $index as visited');},
+                    openDetail: (index) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                DetailWidget(destID: selectedDestinations[index].id)
+                        ),
+                      );
+                    },
+                    onRefresh: () {
+                      loadRecommendations();
+                      print("Load bubbles with settings:");
+                      parameters.forEach((parameter) => print("\t- ${parameter.description}:\t${parameter.value}"));
+                    }
+                  )
+                ),
                 Container(
                   child: ParameterSliders(
                     parameters: parameters,
@@ -84,12 +106,7 @@ class BubbleScreenState extends State<BubbleScreen> {
                 )
               ],
             ),
-            floatingActionButton: FloatingActionButton(child: Icon(Icons.refresh), onPressed: () {
-              setState(loadRecommendations);
-              print("Load bubbles with settings:");
-              parameters.forEach((parameter) => print("\t- ${parameter.description}:\t${parameter.value}"));
-            },),
-            floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked)
+        )
     );
   }
 }
