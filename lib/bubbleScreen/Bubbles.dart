@@ -24,7 +24,8 @@ class Circles extends StatefulWidget {
       bubbles: bubbles,
       markFavorite: markFavorite,
       markVisited: markVisited,
-      openDetail: openDetail
+      openDetail: openDetail,
+      onRefresh: onRefresh
   );
 }
 
