@@ -51,64 +51,64 @@ class BubbleScreenState extends State<BubbleScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: "Trip Ideas",
-        home: Scaffold(
-            appBar: AppBar(
-              title: Text('Trip Ideas'),
-              actions: <Widget>[
-                new IconButton(
-                  icon: new Icon(Icons.assignment_turned_in),
-                  onPressed: () {},
-                ),
-                new IconButton(
-                  icon: new Icon(Icons.favorite),
-                  onPressed: () {},
-                ),
-                new IconButton(
-                  icon: new Icon(Icons.account_circle),
-                  onPressed: () {},
-                )
-              ],
-            ),
-            body: Column(
-              children: [
-                Flexible(
-                  child: Builder(
-                    builder: (context) => Circles(
-                      bubbles: selectedDestinations,
-                      markFavorite: (index) {print('mark $index as favorite');},
-                      markVisited: (index) {print('mark $index as visited');},
-                      openDetail: (index) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  DetailWidget(destID: selectedDestinations[index].id)
-                          ),
-                        );
-                      },
-                      onRefresh: () {
-                        loadRecommendations();
-                        print("Load bubbles with settings:");
-                        parameters.forEach((parameter) => print("\t- ${parameter.description}:\t${parameter.value}"));
-                      }
+    final components = [
+      Flexible(
+          child: Builder(
+            builder: (context) => Circles(
+                bubbles: selectedDestinations,
+                markFavorite: (index) {print('mark $index as favorite');},
+                markVisited: (index) {print('mark $index as visited');},
+                openDetail: (index) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            DetailWidget(destID: selectedDestinations[index].id)
                     ),
-                  )
-                ),
-                Container(
-                  child: ParameterSliders(
-                    parameters: parameters,
-                    changeCallback: (changeParameter) {
-                      setState(changeParameter);
-                    },
-                    changeRadioCallback: _handleRadioValueChange,
-                  ),
-                  padding: EdgeInsets.fromLTRB(0, 0, 0, 40),
-                )
-              ],
+                  );
+                },
+                onRefresh: () {
+                  loadRecommendations();
+                  print("Load bubbles with settings:");
+                  parameters.forEach((parameter) => print("\t- ${parameter.description}:\t${parameter.value}"));
+                }
             ),
-        )
+          )
+      ),
+      Flexible(
+        child: Container(
+          child: ParameterSliders(
+            parameters: parameters,
+            changeCallback: (changeParameter) {
+              setState(changeParameter);
+            },
+            changeRadioCallback: _handleRadioValueChange,
+          ),
+          padding: EdgeInsets.fromLTRB(0, 0, 0, 40),
+        ),
+      )
+    ];
+    return Scaffold(
+        appBar: AppBar(
+          title: Text('Trip Ideas'),
+          actions: <Widget>[
+            new IconButton(
+              icon: new Icon(Icons.assignment_turned_in),
+              onPressed: () {},
+            ),
+            new IconButton(
+              icon: new Icon(Icons.favorite),
+              onPressed: () {},
+            ),
+            new IconButton(
+              icon: new Icon(Icons.account_circle),
+              onPressed: () {},
+            )
+          ],
+        ),
+        body: MediaQuery.of(context).orientation == Orientation.portrait ?
+          Column(children: components) :
+          Row(children: components)
     );
   }
 }
