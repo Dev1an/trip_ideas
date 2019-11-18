@@ -60,7 +60,6 @@ class BubbleScreenState extends State<BubbleScreen> {
   @override
   Widget build(BuildContext context) {
     selectedDestinations.forEach((destination) {
-      print('${destination.destination}: ${destination.id}');
       destination.isFavorite = favorites.contains(destination.id);
     });
 
