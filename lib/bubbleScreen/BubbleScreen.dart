@@ -102,6 +102,8 @@ class BubbleScreenState extends State<BubbleScreen> {
                             DetailWidget(destID: selectedDestinations[index].id)
                     ),
                   ).then((value) {
+                    // Favorites might have changed while browsing the detail pages
+                    // so we refresh the favorites when we get back to the overview
                     loadFavorites();
                   });
                 },
