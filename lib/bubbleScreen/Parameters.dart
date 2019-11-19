@@ -6,9 +6,18 @@ import 'BubbleScreen.dart';
 class ParameterSliders extends StatelessWidget {
   final List<Parameter> parameters;
   final void Function(void Function()) changeCallback;
+  final void Function(Parameter) changeStartCallback;
+  final void Function(Parameter) changeEndCallback;
   final void Function(String) changeRadioCallback;
 
-  const ParameterSliders({Key key, this.parameters, this.changeCallback, this.changeRadioCallback}) : super(key: key);
+  const ParameterSliders({
+    Key key,
+    this.parameters,
+    this.changeCallback,
+    this.changeStartCallback,
+    this.changeEndCallback,
+    this.changeRadioCallback
+  }) : super(key: key);
 
   Container createRow(Parameter parameter) {
     return Container(
@@ -22,6 +31,8 @@ class ParameterSliders extends StatelessWidget {
                 onChanged: (value) {
                   changeCallback(() {parameter.value = value;});
                 },
+                onChangeStart: (value) => changeStartCallback(parameter),
+                onChangeEnd: (value) => changeEndCallback(parameter),
               )
           ),
           Radio(

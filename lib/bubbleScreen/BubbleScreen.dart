@@ -121,6 +121,16 @@ class BubbleScreenState extends State<BubbleScreen> {
           changeCallback: (changeParameter) {
             setState(changeParameter);
           },
+          changeStartCallback: (parameter) {
+            setState(() {
+              radioValue1 = parameter.description;
+            });
+          },
+          changeEndCallback: (parameter) {
+            setState(() {
+              radioValue1 = '';
+            });
+          },
           changeRadioCallback: _handleRadioValueChange,
         ),
         padding: EdgeInsets.fromLTRB(0, 0, 0, 40),
