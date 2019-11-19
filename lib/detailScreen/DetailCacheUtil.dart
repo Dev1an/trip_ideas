@@ -84,8 +84,8 @@ Future<Destination> getDetailsOfDestination(int destID) async {
   if (LOCALHOST)
     host = "localhost:5000";
   else
-    host = "http://tripideas.heroku.com";
-  String url = 'http://' + host + '/destination/?id=' + destID.toString();
+    host = "tripideas.herokuapp.com";
+  String url = 'https://' + host + '/destination/?id=' + destID.toString();
   // GET REQUEST
   var response = await http.get(url); // sample info available in response
 

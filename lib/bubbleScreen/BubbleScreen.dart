@@ -3,6 +3,7 @@ import 'package:trip_ideas/Database.dart';
 import 'package:trip_ideas/detailScreen/Detail.dart';
 import 'package:trip_ideas/model/BubbleData.dart';
 import 'package:trip_ideas/bubbleScreen/RecommendationUtil.dart';
+import 'package:trip_ideas/model/DestinationSimple.dart';
 import 'package:trip_ideas/model/Parameters.dart';
 import 'package:trip_ideas/model/Destination.dart';
 
@@ -22,8 +23,13 @@ class BubbleScreenState extends State<BubbleScreen> {
 
   BubbleScreenState() {
     loadRecommendations();
+    loadFavorites();
+  }
+
+  void loadFavorites() {
     DatabaseHelper.instance.queryAllFavorites().then((favorites) {
       setState(() {
+        this.favorites.clear();
         this.favorites.addAll(favorites.map((destination) => destination.id));
       });
     });
@@ -36,6 +42,22 @@ class BubbleScreenState extends State<BubbleScreen> {
           selectedDestinations.addAll(destinations);
         })
     );
+  }
+
+  void addFavorite(Destination destination) {
+    // Update state
+    setState(() {
+      favorites.add(destination.id);
+    });
+
+    // create record to save
+    DestinationSimple databaseRecord = DestinationSimple.init(
+      id: destination.id,
+      country: destination.country,
+      destination: destination.destination
+    );
+    // Save record to local DataBase
+    DatabaseHelper.instance.insertFavorite(databaseRecord);
   }
   
   static String radioValue1;
@@ -69,10 +91,7 @@ class BubbleScreenState extends State<BubbleScreen> {
             builder: (context) => Circles(
                 bubbles: selectedDestinations,
                 markFavorite: (index) {
-                  setState(() {
-                    favorites.add(selectedDestinations[index].id);
-                    print('favorites: $favorites');
-                  });
+                  addFavorite(selectedDestinations[index]);
                 },
                 markVisited: (index) {print('mark $index as visited');},
                 openDetail: (index) {
@@ -82,7 +101,9 @@ class BubbleScreenState extends State<BubbleScreen> {
                         builder: (context) =>
                             DetailWidget(destID: selectedDestinations[index].id)
                     ),
-                  );
+                  ).then((value) {
+                    loadFavorites();
+                  });
                 },
                 onRefresh: () {
                   loadRecommendations();

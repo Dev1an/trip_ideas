@@ -32,7 +32,7 @@ class FavoriteOrVisitedListState extends State<FavoriteOrVisitedList> {
     _populateList();
   }
 
-  void _populateList() {
+  void  _populateList() {
     _favoritesOrVisiteds = new List<DestinationSimple>();
     DatabaseHelper helper = DatabaseHelper.instance;
     if(type==FavOrVisEnum.favorite) {

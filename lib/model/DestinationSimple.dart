@@ -8,6 +8,7 @@ class DestinationSimple {
   String country;
 
   DestinationSimple();
+  DestinationSimple.init({this.id, this.destination, this.country});
 
   // convenience constructor to create a DestinationSimple object from a Map
   DestinationSimple.fromMap(Map<String, dynamic> map) {

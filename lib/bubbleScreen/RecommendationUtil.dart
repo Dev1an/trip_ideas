@@ -9,8 +9,8 @@ Future<List<Destination>> getRecommendations(List<Parameter> parameters, Set<int
   if (LOCALHOST)
     host = "localhost:5000";
   else
-    host = "http://tripideas.heroku.com";
-  String url = 'http://' + host + '/recommendations/';
+    host = "tripideas.herokuapp.com";
+  String url = 'https://' + host + '/recommendations/';
   int beachScore = (parameters.elementAt(0).value * 100).toInt();
   int natureScore = (parameters.elementAt(1).value * 100).toInt();
   int cultureScore = (parameters.elementAt(2).value * 100).toInt();
