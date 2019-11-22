@@ -1,11 +1,11 @@
+import 'package:trip_ideas/model/pythonAPI.dart';
+
 import '../Database.dart';
 import '../model/Destination.dart';
 import '../model/DestinationSimple.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'dart:convert';
-
-const bool LOCALHOST = true; // Use localhost or Heroku for details lookup
 
 // ==================== ADD ====================
 addDestinationToCache(Destination dest) async {

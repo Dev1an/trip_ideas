@@ -3,8 +3,9 @@ import 'package:trip_ideas/model/Parameters.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:trip_ideas/model/pythonAPI.dart';
+
 Future<List<Destination>> getRecommendations(List<Parameter> parameters, Set<int> exclusionSet) async {
-  bool LOCALHOST = true;
   String baseURL;
   if (LOCALHOST)
     baseURL = "http://localhost:5000";
