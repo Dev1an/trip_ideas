@@ -157,7 +157,8 @@ class BubbleScreenState extends State<BubbleScreen> {
             )
           ],
         ),
-        body: Column(children: components)
+        body: MediaQuery.of(context).orientation == Orientation.portrait ?
+          Column(children: components) : Row(children: components,)
     );
   }
 }
