@@ -143,9 +143,11 @@ class CirclesState extends State<Circles> with SingleTickerProviderStateMixin {
     int score = 0;
     Color scoreColor = Colors.orange;
     switch (BubbleScreenState.radioValue1) {
-      case "Beach":   score = data.scoreBeach; scoreColor = Colors.lightBlueAccent; break;
-      case "Nature":  score = data.scoreNature; scoreColor = Colors.lightGreen;  break;
-      case "Culture": score = data.scoreCulture; scoreColor = Colors.yellow; break;
+      case "Beach":     score = data.scoreBeach; scoreColor = Colors.lightBlueAccent; break;
+      case "Nature":    score = data.scoreNature; scoreColor = Colors.lightGreen;  break;
+      case "Culture":   score = data.scoreCulture; scoreColor = Colors.yellow; break;
+      case "Shopping":  score = data.scoreShopping; scoreColor = Colors.purple; break;
+      case "Nightlife": score = data.scoreNightlife; scoreColor = Colors.pink; break;
     }
 
     final NetworkImage picture = NetworkImage(data.pictureURL);

@@ -11,11 +11,13 @@ Future<List<Destination>> getRecommendations(List<Parameter> parameters, Set<int
   else
     baseURL = "https://tripideas.herokuapp.com";
   String url = baseURL + '/recommendations/';
-  int beachScore = (parameters.elementAt(0).value * 100).toInt();
-  int natureScore = (parameters.elementAt(1).value * 100).toInt();
-  int cultureScore = (parameters.elementAt(2).value * 100).toInt();
+  int     beachScore = (parameters.elementAt(0).value * 100).toInt();
+  int    natureScore = (parameters.elementAt(1).value * 100).toInt();
+  int   cultureScore = (parameters.elementAt(2).value * 100).toInt();
+  int  shoppingScore = (parameters.elementAt(3).value * 100).toInt();
+  int nightLifeScore = (parameters.elementAt(4).value * 100).toInt();
 
-  var prefs = [beachScore, natureScore, cultureScore, 0, 5];
+  var prefs = [beachScore, natureScore, cultureScore, shoppingScore, nightLifeScore];
   var resp = await http.post(
     url,
     body: {

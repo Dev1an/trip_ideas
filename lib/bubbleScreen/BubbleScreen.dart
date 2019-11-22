@@ -88,55 +88,55 @@ class BubbleScreenState extends State<BubbleScreen> {
     });
 
     final components = [
-      Flexible(
-          child: Builder(
-            builder: (context) => Circles(
-                bubbles: selectedDestinations,
-                markFavorite: (index) {
-                  addFavorite(selectedDestinations[index]);
-                },
-                markVisited: (index) {print('mark $index as visited');},
-                openDetail: (index) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            DetailWidget(destID: selectedDestinations[index].id)
-                    ),
-                  ).then((value) {
-                    // Favorites might have changed while browsing the detail pages
-                    // so we refresh the favorites when we get back to the overview
-                    loadFavorites();
-                  });
-                },
-                onRefresh: () {
-                  loadRecommendations();
-                  print("Load bubbles with settings:");
-                  parameters.forEach((parameter) => print("\t- ${parameter.description}:\t${parameter.value}"));
-                }
-            ),
-          )
-      ),
-      Container(
-        child: ParameterSliders(
-          parameters: parameters,
-          changeCallback: (changeParameter) {
-            setState(changeParameter);
-          },
-          changeStartCallback: (parameter) {
-            setState(() {
-              radioValue1 = parameter.description;
-            });
-          },
-          changeEndCallback: (parameter) {
-            setState(() {
-              radioValue1 = '';
+      Builder(
+        builder: (context) => Circles(
+            bubbles: selectedDestinations,
+            markFavorite: (index) {
+              addFavorite(selectedDestinations[index]);
+            },
+            markVisited: (index) {print('mark $index as visited');},
+            openDetail: (index) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        DetailWidget(destID: selectedDestinations[index].id)
+                ),
+              ).then((value) {
+                // Favorites might have changed while browsing the detail pages
+                // so we refresh the favorites when we get back to the overview
+                loadFavorites();
+              });
+            },
+            onRefresh: () {
               loadRecommendations();
-            });
-          },
-          highlightParameter: (parameterDescription) => setState(() {radioValue1 = parameterDescription;}),
+              print("Load bubbles with settings:");
+              parameters.forEach((parameter) => print("\t- ${parameter.description}:\t${parameter.value}"));
+            }
         ),
-        padding: EdgeInsets.fromLTRB(0, 0, 0, 40),
+      ),
+      Flexible(
+        child: Container(
+          child: ParameterSliders(
+            parameters: parameters,
+            changeCallback: (changeParameter) {
+              setState(changeParameter);
+            },
+            changeStartCallback: (parameter) {
+              setState(() {
+                radioValue1 = parameter.description;
+              });
+            },
+            changeEndCallback: (parameter) {
+              setState(() {
+                radioValue1 = '';
+                loadRecommendations();
+              });
+            },
+            highlightParameter: (parameterDescription) => setState(() {radioValue1 = parameterDescription;}),
+          ),
+          padding: EdgeInsets.only(top: 20),
+        ),
       )
     ];
     return Scaffold(
