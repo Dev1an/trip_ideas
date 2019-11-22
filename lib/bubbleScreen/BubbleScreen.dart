@@ -129,6 +129,7 @@ class BubbleScreenState extends State<BubbleScreen> {
           changeEndCallback: (parameter) {
             setState(() {
               radioValue1 = '';
+              loadRecommendations();
             });
           },
           changeRadioCallback: _handleRadioValueChange,

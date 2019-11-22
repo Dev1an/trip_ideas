@@ -80,12 +80,12 @@ Future<Destination> getDetailsOfDestination(int destID) async {
   // NOT IN CACHE
   Destination destination = new Destination();
   // URL
-  String host;
+  String baseURL;
   if (LOCALHOST)
-    host = "localhost:5000";
+    baseURL = "http://localhost:5000";
   else
-    host = "tripideas.herokuapp.com";
-  String url = 'https://' + host + '/destination/?id=' + destID.toString();
+    baseURL = "https://tripideas.herokuapp.com";
+  String url = baseURL + '/destination/?id=' + destID.toString();
   // GET REQUEST
   var response = await http.get(url); // sample info available in response
 
