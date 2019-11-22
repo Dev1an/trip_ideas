@@ -3,7 +3,7 @@ import 'package:trip_ideas/model/Parameters.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-Future<List<Destination>> getRecommendations(List<Parameter> parameters, Set<int> favorites) async {
+Future<List<Destination>> getRecommendations(List<Parameter> parameters, Set<int> exclusionSet) async {
   bool LOCALHOST = true;
   String baseURL;
   if (LOCALHOST)
@@ -22,7 +22,7 @@ Future<List<Destination>> getRecommendations(List<Parameter> parameters, Set<int
     url,
     body: {
       'preferences': prefs.toString(),
-      'removed': json.encode(favorites.toList())
+      'removed': json.encode(exclusionSet.toList())
     }
   );
   //print('Response status: ${resp.statusCode}');

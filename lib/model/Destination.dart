@@ -1,3 +1,5 @@
+import 'package:trip_ideas/model/DestinationSimple.dart';
+
 import '../Database.dart';
 
 /// Class with all the details of a Destination
@@ -70,6 +72,13 @@ class Destination {
     destination.scoreNightlife = json['Nightlife score'];
 
     return destination;
+  }
 
+  DestinationSimple reduced() {
+    return DestinationSimple.init(
+      id: id,
+      destination: destination,
+      country: country
+    );
   }
 }

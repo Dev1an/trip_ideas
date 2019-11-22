@@ -3,7 +3,6 @@ import 'package:trip_ideas/Database.dart';
 import 'package:trip_ideas/detailScreen/Detail.dart';
 import 'package:trip_ideas/model/BubbleData.dart';
 import 'package:trip_ideas/bubbleScreen/RecommendationUtil.dart';
-import 'package:trip_ideas/model/DestinationSimple.dart';
 import 'package:trip_ideas/model/Parameters.dart';
 import 'package:trip_ideas/model/Destination.dart';
 
@@ -37,13 +36,22 @@ class BubbleScreenState extends State<BubbleScreen> {
     });
   }
 
+  Future<Set<int>> getShown() async {
+    return (await DatabaseHelper.instance.queryAllShown()).map((destination) => destination.id).toSet();
+  }
+  
   void loadRecommendations() {
-    getRecommendations(parameters, favorites).then((destinations) =>
+    getShown().then((shownDestinations) {
+      getRecommendations(parameters, favorites.union(shownDestinations)).then((destinations) {
         setState(() {
           selectedDestinations.clear();
           selectedDestinations.addAll(destinations);
-        })
-    );
+        });
+        destinations.forEach((destination) {
+          DatabaseHelper.instance.insertShown(destination.reduced());
+        });
+      });
+    });
   }
 
   void addFavorite(Destination destination) {
@@ -52,14 +60,8 @@ class BubbleScreenState extends State<BubbleScreen> {
       favorites.add(destination.id);
     });
 
-    // create record to save
-    DestinationSimple databaseRecord = DestinationSimple.init(
-      id: destination.id,
-      country: destination.country,
-      destination: destination.destination
-    );
     // Save record to local DataBase
-    DatabaseHelper.instance.insertFavorite(databaseRecord);
+    DatabaseHelper.instance.insertFavorite(destination.reduced());
   }
   
   static String radioValue1;
