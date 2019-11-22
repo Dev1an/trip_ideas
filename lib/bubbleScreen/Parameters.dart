@@ -8,7 +8,7 @@ class ParameterSliders extends StatelessWidget {
   final void Function(void Function()) changeCallback;
   final void Function(Parameter) changeStartCallback;
   final void Function(Parameter) changeEndCallback;
-  final void Function(String) changeRadioCallback;
+  final void Function(String) highlightParameter;
 
   const ParameterSliders({
     Key key,
@@ -16,14 +16,20 @@ class ParameterSliders extends StatelessWidget {
     this.changeCallback,
     this.changeStartCallback,
     this.changeEndCallback,
-    this.changeRadioCallback
+    this.highlightParameter
   }) : super(key: key);
 
   Container createRow(Parameter parameter) {
     return Container(
       child: Row(
         children: [
-          Text(parameter.description),
+          RaisedButton(
+            child: Text(parameter.description),
+            onPressed: () {},
+            onHighlightChanged: (isHighlighted) {
+             highlightParameter(isHighlighted ? parameter.description : null);
+            },
+          ),
           Flexible(
               child: Slider(
                 value: parameter.value,
@@ -34,12 +40,7 @@ class ParameterSliders extends StatelessWidget {
                 onChangeStart: (value) => changeStartCallback(parameter),
                 onChangeEnd: (value) => changeEndCallback(parameter),
               )
-          ),
-          Radio(
-            value: parameter.description,
-            groupValue: BubbleScreenState.radioValue1,
-            onChanged: changeRadioCallback,
-          ),
+          )
         ],
       ),
       padding: EdgeInsets.symmetric(horizontal: 16),

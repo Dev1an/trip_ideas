@@ -16,7 +16,9 @@ class BubbleScreenState extends State<BubbleScreen> {
   final List<Parameter> parameters = [
     Parameter('Beach', 0.20),
     Parameter('Nature', 0.90),
-    Parameter('Culture', 0.70)
+    Parameter('Culture', 0.70),
+    Parameter('Shopping', 0.10),
+    Parameter('Nightlife', 0.30)
   ];
 
   final Set<int> favorites = Set.of([]);
@@ -132,7 +134,7 @@ class BubbleScreenState extends State<BubbleScreen> {
               loadRecommendations();
             });
           },
-          changeRadioCallback: _handleRadioValueChange,
+          highlightParameter: (parameterDescription) => setState(() {radioValue1 = parameterDescription;}),
         ),
         padding: EdgeInsets.fromLTRB(0, 0, 0, 40),
       )
