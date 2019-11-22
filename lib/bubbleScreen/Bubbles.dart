@@ -181,16 +181,19 @@ class CirclesState extends State<Circles> with SingleTickerProviderStateMixin {
                           crossAxisAlignment: CrossAxisAlignment.center,
 
                           children: [
-                            Text(
-                                data.destination,
-                                style: TextStyle(
+                            FittedBox(
+                              fit: BoxFit.fitWidth,
+                              child: Text(
+                                  data.destination,
+                                  style: TextStyle(
                                     color: Colors.white,
                                     shadows: [
                                       Shadow(blurRadius: 3, color: Colors.black),
                                       Shadow(blurRadius: 7, color: Colors.black)
                                     ],
-                                    fontSize: 20
-                                )
+                                    fontSize: 20,
+                                  )
+                              ),
                             ),
                             if (data.isFavorite) Icon(Icons.favorite, color: Colors.white),
 //                            if (data.isVisited) Icon(Icons.assignment_turned_in, color: Colors.white),
