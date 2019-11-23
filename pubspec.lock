@@ -15,13 +15,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.5"
-  bubble_chart:
-    dependency: "direct main"
-    description:
-      path: "bubble_chart-0.2.0+extended"
-      relative: true
-    source: path
-    version: "0.2.0"
   charcode:
     dependency: transitive
     description:
@@ -136,7 +129,7 @@ packages:
       name: path_provider
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.4.2"
+    version: "1.4.4"
   pedantic:
     dependency: transitive
     description:
@@ -211,7 +204,7 @@ packages:
       name: synchronized
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.0+1"
+    version: "2.1.0+2"
   term_glyph:
     dependency: transitive
     description:
