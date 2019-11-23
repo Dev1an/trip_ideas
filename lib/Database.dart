@@ -20,9 +20,8 @@ final String columnScoreNightlife = 'scorenightlife';
 
 final String tableFavorites = 'favorites';
 final String tableVisited = 'visited';
-final String tableShown = 'shown';
 final String tablePreferences = 'preferences';
-
+List<DestinationSimple> shownList = new List<DestinationSimple>();
 
 // singleton class to manage the database
 class DatabaseHelper {
@@ -95,12 +94,6 @@ class DatabaseHelper {
         $columnDestinationCity TEXT NOT NULL,
         $columnDestinationCountry TEXT
        )''');
-    await db.execute('''
-       CREATE TABLE $tableShown (
-        $columnId INTEGER PRIMARY KEY,
-        $columnDestinationCity TEXT NOT NULL,
-        $columnDestinationCountry TEXT
-       )''');
   }
 
   // __________________________________________________________
@@ -141,7 +134,9 @@ class DatabaseHelper {
   }
 
   Future<int> insertShown(DestinationSimple shown) async {
-    return _insertDestinationSimpleInTable(shown, tableShown);
+    shownList.add(shown);
+    return -666;
+    //return _insertDestinationSimpleInTable(shown, tableShown);
   }
 
   Future<int> _insertDestinationSimpleInTable(DestinationSimple destSimple, String table) async {
@@ -160,7 +155,8 @@ class DatabaseHelper {
   }
 
   Future<int> deleteShown(int id) async {
-    return _deleteDestinationSimpleInTable(id, tableShown);
+    shownList.removeWhere((dest) => dest.id == id);
+    return -777;
   }
 
   Future<int> _deleteDestinationSimpleInTable(int id,String table) async {
@@ -203,7 +199,8 @@ class DatabaseHelper {
   }
 
   Future<List<DestinationSimple>> queryAllShown() async {
-    return _queryAllDestinationSimpleInTable(tableShown);
+    return shownList;
+    //return _queryAllDestinationSimpleInTable(tableShown);
   }
 
   Future<List<DestinationSimple>> _queryAllDestinationSimpleInTable(String table) async {
