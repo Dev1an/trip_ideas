@@ -16,20 +16,14 @@ addDestinationToCache(Destination dest) async {
 
 addFavorite(Destination dest) async {
   DatabaseHelper helper = DatabaseHelper.instance;
-  DestinationSimple fv = new DestinationSimple();
-  fv.id = dest.id;
-  fv.destination = dest.destination;
-  fv.country = dest.country;
+  DestinationSimple fv = dest.reduced();
   await helper.insertFavorite(fv);
   print('inserted ' + dest.destination + ' as favorite');
 }
 
 addVisited(Destination dest) async {
   DatabaseHelper helper = DatabaseHelper.instance;
-  DestinationSimple fv = new DestinationSimple();
-  fv.id = dest.id;
-  fv.destination = dest.destination;
-  fv.country = dest.country;
+  DestinationSimple fv = dest.reduced();
   int id = await helper.insertVisited(fv);
   print('inserted visited row: $id');
 }
@@ -111,6 +105,7 @@ Future<Destination> getDetailsOfDestination(int destID) async {
     imagesList.add(raw_destination['Front image']);
     //print(imagesList);
     destination.otherImagesJSON = imagesList.toString();
+    destination.pictureURL = raw_destination['Front image'];
     destination.scoreBeach = raw_destination['Beach score'];
     destination.scoreNature = raw_destination['Nature score'];
     destination.scoreCulture = raw_destination['Culture score'];

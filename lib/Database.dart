@@ -17,6 +17,7 @@ final String columnScoreNature = 'scorenature';
 final String columnScoreCulture = 'scoreculture';
 final String columnScoreShopping = 'scoreshopping';
 final String columnScoreNightlife = 'scorenightlife';
+final String columnImage = 'image';
 
 final String tableFavorites = 'favorites';
 final String tableVisited = 'visited';
@@ -86,13 +87,15 @@ class DatabaseHelper {
        CREATE TABLE $tableFavorites (
         $columnId INTEGER PRIMARY KEY,
         $columnDestinationCity TEXT NOT NULL,
-        $columnDestinationCountry TEXT
+        $columnDestinationCountry TEXT,
+        $columnImage TEXT
        )''');
     await db.execute('''
        CREATE TABLE $tableVisited (
         $columnId INTEGER PRIMARY KEY,
         $columnDestinationCity TEXT NOT NULL,
-        $columnDestinationCountry TEXT
+        $columnDestinationCountry TEXT,
+        $columnImage TEXT
        )''');
   }
 

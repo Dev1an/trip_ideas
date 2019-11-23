@@ -57,6 +57,42 @@ class FavoriteOrVisitedListState extends State<FavoriteOrVisitedList> {
 
   Card _buildItemsForListView(BuildContext context, int index) {
     return Card(
+      elevation: 5.0,
+        child: new Row(
+          children: <Widget>[
+            Container(
+              height: 200,
+              width: 300,
+              decoration: new BoxDecoration(
+                  image: new DecorationImage(
+                    fit: BoxFit.fitHeight,
+                    alignment: FractionalOffset.topCenter,
+                    image: new NetworkImage(
+                        _favoritesOrVisiteds[index].pictureURL),
+                  )
+              ), child: Padding(padding: new EdgeInsets.all(10.0),
+              child: Text(
+                _favoritesOrVisiteds[index].destination, softWrap: true,
+                style: TextStyle(color: Colors.white, fontSize: 18),),),),
+            /*Container(
+              width: 250,
+              height: 200,
+              child: Stack(
+              children: <Widget>[
+                new Image.network(
+                  _favoritesOrVisiteds[index].pictureURL, fit: BoxFit.cover),
+                new FittedBox(
+                  child: Text(
+                    _favoritesOrVisiteds[index].destination, softWrap: true,
+                    style: TextStyle(
+                        color: Colors.white),),
+                  fit: BoxFit.fitWidth,),
+              ],
+            )),*/
+            FavoriteOrVisitedWidget(index: index, type: type,onChanged: _handleFavOrVisChanged)
+          ],
+        ),
+      /*
         child: ListTile(
           title:
               Text(_favoritesOrVisiteds[index].destination, style: TextStyle(fontSize: 20)),
@@ -69,7 +105,7 @@ class FavoriteOrVisitedListState extends State<FavoriteOrVisitedList> {
               MaterialPageRoute(builder: (context) => DetailWidget(destID:_favoritesOrVisiteds[index].id)),
             );
           },
-        ),
+        ),*/
       margin: EdgeInsets.all(10.0)
     );
   }

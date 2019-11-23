@@ -78,7 +78,8 @@ class Destination {
     return DestinationSimple.init(
       id: id,
       destination: destination,
-      country: country
+      country: country,
+      pictureURL: pictureURL
     );
   }
 }

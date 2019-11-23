@@ -102,7 +102,7 @@ class BubbleScreenState extends State<BubbleScreen> {
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
-                        DetailWidget(destID: selectedDestinations[index].id)
+                        DetailWidget(dest: selectedDestinations[index])
                 ),
               ).then((value) {
                 // Favorites might have changed while browsing the detail pages
