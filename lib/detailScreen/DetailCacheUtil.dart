@@ -102,7 +102,7 @@ Future<Destination> getDetailsOfDestination(int destID) async {
     if (imagesList.elementAt(0) != "") imagesList = imagesList.map((i) => i.substring(1,i.length-1)).toList();
     else imagesList = new List<String>();
     //print(imagesList);
-    imagesList.add(raw_destination['Front image']);
+    //imagesList.add(raw_destination['Front image']);
     //print(imagesList);
     destination.otherImagesJSON = imagesList.toString();
     destination.pictureURL = raw_destination['Front image'];

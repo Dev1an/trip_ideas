@@ -5,7 +5,7 @@ import 'dart:convert';
 
 import 'package:trip_ideas/model/pythonAPI.dart';
 
-Future<List<Destination>> getRecommendations(List<Parameter> parameters, Set<int> exclusionSet) async {
+Future<List<Destination>> getRecommendations(List<Parameter> parameters, Set<int> exclusionSet, int page) async {
   String baseURL;
   if (LOCALHOST)
     baseURL = "http://localhost:5000";
@@ -23,6 +23,7 @@ Future<List<Destination>> getRecommendations(List<Parameter> parameters, Set<int
     url,
     body: {
       'preferences': prefs.toString(),
+      'page': page.toString(),
       'removed': json.encode(exclusionSet.toList())
     }
   );

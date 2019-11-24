@@ -58,69 +58,48 @@ class FavoriteOrVisitedListState extends State<FavoriteOrVisitedList> {
   Card _buildItemsForListView(BuildContext context, int index) {
     return Card(
       elevation: 5.0,
-      child: new Row(
-        children: <Widget>[
-        Container(
-          height: 175,
-          width: 300,
-          decoration: new BoxDecoration(
-              image: new DecorationImage(
-                fit: BoxFit.fitHeight,
-                alignment: FractionalOffset.topLeft,
-                image: new NetworkImage(
-                    _favoritesOrVisiteds[index].pictureURL),
-              )
-          ),
-          child: Padding(
-            padding: new EdgeInsets.all(10.0),
-            child: Stack(
-              children: <Widget>[
-            // Stroked text as border.
-                Text(
-                _favoritesOrVisiteds[index].destination,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 30,
-                shadows: [
-                  Shadow(blurRadius: 3, color: Colors.black),
-                  Shadow(blurRadius: 7, color: Colors.black),
-                ],
-                // Solid text as fill.
-          ),)
-            ],
-      ),),),
-    /*Container(
-              width: 250,
-              height: 200,
+      child: new InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => DetailWidget(dest:_favoritesOrVisiteds[index].toDestination())),
+          );
+        },
+        child: new Row(
+          children: <Widget>[
+          Container(
+            height: 175,
+            width: 300,
+            decoration: new BoxDecoration(
+                image: new DecorationImage(
+                  fit: BoxFit.fitHeight,
+                  alignment: FractionalOffset.topLeft,
+                  image: new NetworkImage(
+                      _favoritesOrVisiteds[index].pictureURL),
+                )
+            ),
+            child: Padding(
+              padding: new EdgeInsets.all(10.0),
               child: Stack(
-              children: <Widget>[
-                new Image.network(
-                  _favoritesOrVisiteds[index].pictureURL, fit: BoxFit.cover),
-                new FittedBox(
-                  child: Text(
-                    _favoritesOrVisiteds[index].destination, softWrap: true,
+                children: <Widget>[
+                  // Stroked text as border.
+                  Text(
+                    _favoritesOrVisiteds[index].destination,
                     style: TextStyle(
-                        color: Colors.white),),
-                  fit: BoxFit.fitWidth,),
-              ],
-            )),*/
-        FavoriteOrVisitedWidget(index: index, type: type,onChanged: _handleFavOrVisChanged)
-      ],
-    ),
-    /*
-        child: ListTile(
-          title:
-              Text(_favoritesOrVisiteds[index].destination, style: TextStyle(fontSize: 20)),
-          subtitle: Text(_favoritesOrVisiteds[index].country.toString(),
-              style: TextStyle(fontSize: 18)),
-          trailing: FavoriteOrVisitedWidget(index: index, type: type,onChanged: _handleFavOrVisChanged),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => DetailWidget(destID:_favoritesOrVisiteds[index].id)),
-            );
-          },
-        ),*/
+                      color: Colors.white,
+                      fontSize: 30,
+                      shadows: [
+                        Shadow(blurRadius: 3, color: Colors.black),
+                        Shadow(blurRadius: 7, color: Colors.black),
+                      ],
+                      // Solid text as fill.
+                    ),)
+                ],
+              ),),),
+          FavoriteOrVisitedWidget(index: index, type: type,onChanged: _handleFavOrVisChanged)
+          ],
+        ),
+      ),
       margin: EdgeInsets.all(10.0)
     );
   }

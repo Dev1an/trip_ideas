@@ -72,7 +72,10 @@ class _DetailWidgetState extends State<DetailWidget> {
     if (calledBuild == 2 && currentDestination !=null &&currentDestination.destination!=""){
       // Only called once (i.e. not when FavoriteWidget invokes setState)
       //photoUrls = getImageUrls(currentDestination.destination);
-      photoUrls = currentDestination.otherImagesJSON.substring(1,currentDestination.otherImagesJSON.length-1).split(", ");
+      print(currentDestination.otherImagesJSON.toString());
+      photoUrls.add(currentDestination.pictureURL);
+      if(currentDestination.otherImagesJSON!="")
+        photoUrls = currentDestination.otherImagesJSON.substring(1,currentDestination.otherImagesJSON.length-1).split(", ");
       //photoUrls = temp.map((i) => su);
       if (photoUrls.length > 1 && photoUrls.length < 6 ) PHOTOS_AMOUNT = photoUrls.length;
       if (photoUrls.length >= 6) PHOTOS_AMOUNT = 5;
@@ -338,16 +341,16 @@ class _DetailWidgetState extends State<DetailWidget> {
 
   _loadDetailsOfCurrent() {
     // set dummy values of placeholder destination
-    //currentDestination.destination="";
+    currentDestination.destination="";
     currentDestination.description="";
     currentDestination.location="";
     currentDestination.country="";
     currentDestination.otherImagesJSON = "";
-    //currentDestination.scoreBeach = 0;
-    //currentDestination.scoreNature = 0;
-    //currentDestination.scoreCulture = 0;
-    //currentDestination.scoreShopping = 0;
-    //currentDestination.scoreNightlife = 0;
+    currentDestination.scoreBeach = 0;
+    currentDestination.scoreNature = 0;
+    currentDestination.scoreCulture = 0;
+    currentDestination.scoreShopping = 0;
+    currentDestination.scoreNightlife = 0;
     distanceField = "- km";
 
     getDetailsOfDestination(currentDestination.id).then((destination) => {
@@ -355,10 +358,7 @@ class _DetailWidgetState extends State<DetailWidget> {
         checkIfFavorite(destination).then((isFavorite) =>
             checkIfVisited(destination).then((isVisited) =>
                 setState(() {
-                  currentDestination.description = destination.description;
-                  currentDestination.location = destination.location;
-                  currentDestination.country = destination.country;
-                  currentDestination.otherImagesJSON = destination.otherImagesJSON;
+                  currentDestination = destination;
                   _favorite = isFavorite;
                   _visited = isVisited;
                 }))

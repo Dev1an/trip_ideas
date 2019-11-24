@@ -1,4 +1,5 @@
 import '../Database.dart';
+import 'Destination.dart';
 
 /// Light representation of a Destination. Used for Favorites, Visited and Shown.
 class DestinationSimple {
@@ -30,5 +31,14 @@ class DestinationSimple {
       map[columnId] = id;
     }
     return map;
+  }
+
+  Destination toDestination() {
+    Destination dest = Destination();
+    dest.destination = destination;
+    dest.pictureURL = pictureURL;
+    dest.country = country;
+    dest.id = id;
+    return dest;
   }
 }

@@ -6,6 +6,7 @@ import 'package:trip_ideas/bubbleScreen/RecommendationUtil.dart';
 import 'package:trip_ideas/model/Parameters.dart';
 import 'package:trip_ideas/model/Destination.dart';
 
+import '../favoriteOrVisitedScreen.dart';
 import 'Bubbles.dart';
 import 'Parameters.dart';
 
@@ -19,6 +20,7 @@ class BubbleScreenState extends State<BubbleScreen> {
     Parameter('Shopping', 0.10),
     Parameter('Nightlife', 0.30)
   ];
+  int page = 1;
 
   final Set<int> favorites = Set.of([]);
 
@@ -35,23 +37,23 @@ class BubbleScreenState extends State<BubbleScreen> {
       });
     });
   }
-
+/*
   Future<Set<int>> getShown() async {
     return (await DatabaseHelper.instance.queryAllShown()).map((destination) => destination.id).toSet();
   }
-  
+  */
   void loadRecommendations() {
-    getShown().then((shownDestinations) {
-      getRecommendations(parameters, favorites.union(shownDestinations)).then((destinations) {
+    //getShown().then((shownDestinations) {
+      getRecommendations(parameters, favorites,page).then((destinations) {
         setState(() {
           selectedDestinations.clear();
           selectedDestinations.addAll(destinations);
         });
-        destinations.forEach((destination) {
-          DatabaseHelper.instance.insertShown(destination.reduced());
-        });
+        //destinations.forEach((destination) {
+        //  DatabaseHelper.instance.insertShown(destination.reduced());
+        //});
       });
-    });
+    //});
   }
 
   void addFavorite(Destination destination) {
@@ -112,6 +114,7 @@ class BubbleScreenState extends State<BubbleScreen> {
             },
             onRefresh: () {
               loadRecommendations();
+              page = (page + 1) % 4 ;
               print("Load bubbles with settings:");
               parameters.forEach((parameter) => print("\t- ${parameter.description}:\t${parameter.value}"));
             }
@@ -151,7 +154,12 @@ class BubbleScreenState extends State<BubbleScreen> {
             ),
             new IconButton(
               icon: new Icon(Icons.favorite),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => FavoriteOrVisitedList(type: FavOrVisEnum.favorite)),
+                ).then((e) => {loadRecommendations()}); // Refresh on back
+              },
             ),
             new IconButton(
               icon: new Icon(Icons.account_circle),
