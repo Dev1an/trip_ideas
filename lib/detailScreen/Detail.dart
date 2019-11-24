@@ -5,6 +5,7 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:http/http.dart' as http;
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:trip_ideas/model/config.dart';
 
 import '../model/Destination.dart';
 import '../detailScreen/DetailCacheUtil.dart';
@@ -31,13 +32,12 @@ class _DetailWidgetState extends State<DetailWidget> {
 
   int PHOTOS_AMOUNT = 1;
   int currentDestID;
-  Destination currentDestination;//= new Destination();
+  Destination currentDestination;
   String distanceField = "- km";
 
   @override
   void initState() {
     super.initState();
-    //_initializeDestinationDB();
     _loadDetailsOfCurrent();
   }
 
@@ -62,7 +62,7 @@ class _DetailWidgetState extends State<DetailWidget> {
   }
 
   //Future<List<String>> photoUrls;
-  List<String> photoUrls = ["",""];
+  List<String> photoUrls = new List<String>();
   int calledBuild = 0;
 
   // The DETAIL build method
@@ -72,11 +72,13 @@ class _DetailWidgetState extends State<DetailWidget> {
     if (calledBuild == 2 && currentDestination !=null &&currentDestination.destination!=""){
       // Only called once (i.e. not when FavoriteWidget invokes setState)
       //photoUrls = getImageUrls(currentDestination.destination);
-      print(currentDestination.otherImagesJSON.toString());
+      print(currentDestination.otherImagesJSON);
+      print("and this is the picture url:");
+      print(currentDestination.pictureURL);
       photoUrls.add(currentDestination.pictureURL);
-      if(currentDestination.otherImagesJSON!="")
-        photoUrls = currentDestination.otherImagesJSON.substring(1,currentDestination.otherImagesJSON.length-1).split(", ");
-      //photoUrls = temp.map((i) => su);
+      if(currentDestination.otherImagesJSON!="" && currentDestination.otherImagesJSON!= "[]")
+        photoUrls.addAll(currentDestination.otherImagesJSON.substring(1,currentDestination.otherImagesJSON.length-1).split(", "));
+      print("After adding others: "+photoUrls.toString());
       if (photoUrls.length > 1 && photoUrls.length < 6 ) PHOTOS_AMOUNT = photoUrls.length;
       if (photoUrls.length >= 6) PHOTOS_AMOUNT = 5;
       if (photoUrls.length <= 1) PHOTOS_AMOUNT = 1;
@@ -86,23 +88,15 @@ class _DetailWidgetState extends State<DetailWidget> {
     Widget photoSection = new Container(
       child: new Swiper(
         itemBuilder: (BuildContext context, int index) {
-          return Image.network(photoUrls.elementAt(index));
-         /* return FutureBuilder(
-            future: photoUrls,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                return Image.network(snapshot.data[index]);
-              } else {
-                return new Container(
-                    child: new Center(
-                      child: new SizedBox(
-                          width: 20.0,
-                          height: 20.0,
-                          child: CircularProgressIndicator()),
+          return photoUrls.isNotEmpty ?
+            Image.network(photoUrls.elementAt(index)) :
+            Container(
+                child: new Center(
+                  child: new SizedBox(
+                      width: 20.0,
+                      height: 20.0,
+                      child: CircularProgressIndicator()),
                 ));
-              }
-            },
-          );*/
         },
         itemCount: PHOTOS_AMOUNT,
         viewportFraction: 0.8,
@@ -180,11 +174,11 @@ class _DetailWidgetState extends State<DetailWidget> {
       //Creates even space between each item and their parent container
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
-        _buildCharacteristicContainer(Icons.beach_access, "Beach", Color(0xff81D4FA),currentDestination.scoreBeach),
-        _buildCharacteristicContainer(CustomIcons.forrest, "Nature", Color(0xffA5D6A7),currentDestination.scoreNature),
-        _buildCharacteristicContainer(CustomIcons.theater, "Culture", Color(0xffFFEB3B),currentDestination.scoreCulture),
-        _buildCharacteristicContainer(CustomIcons.shopping, "Shopping", Color(0xffFFB74D),currentDestination.scoreShopping),
-        _buildCharacteristicContainer(CustomIcons.party, "Nightlife", Color(0xffCE93D8),currentDestination.scoreNightlife),
+        _buildCharacteristicIndicator(Icons.beach_access, "Beach", colorBeach,currentDestination.scoreBeach),
+        _buildCharacteristicIndicator(CustomIcons.forrest, "Nature", colorNature,currentDestination.scoreNature),
+        _buildCharacteristicIndicator(CustomIcons.theater, "Culture", colorCulture,currentDestination.scoreCulture),
+        _buildCharacteristicIndicator(CustomIcons.shopping, "Shopping", colorShopping,currentDestination.scoreShopping),
+        _buildCharacteristicIndicator(CustomIcons.party, "Nightlife", colorNightlife,currentDestination.scoreNightlife),
       ],
     );
 
@@ -226,7 +220,7 @@ class _DetailWidgetState extends State<DetailWidget> {
 
   //=============== HELPER METHODS ===================
 
-  CircularPercentIndicator _buildCharacteristicContainer(IconData icon, String text, Color color, int score) {
+  CircularPercentIndicator _buildCharacteristicIndicator(IconData icon, String text, Color color, int score) {
     double percent = (score.toDouble() / 100);
     return CircularPercentIndicator(
       radius: 60.0,
@@ -345,7 +339,7 @@ class _DetailWidgetState extends State<DetailWidget> {
     currentDestination.description="";
     currentDestination.location="";
     currentDestination.country="";
-    currentDestination.otherImagesJSON = "";
+    //currentDestination.otherImagesJSON = "";
     currentDestination.scoreBeach = 0;
     currentDestination.scoreNature = 0;
     currentDestination.scoreCulture = 0;

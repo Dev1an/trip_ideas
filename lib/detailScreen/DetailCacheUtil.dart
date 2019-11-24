@@ -1,4 +1,4 @@
-import 'package:trip_ideas/model/pythonAPI.dart';
+import 'package:trip_ideas/model/config.dart';
 
 import '../Database.dart';
 import '../model/Destination.dart';

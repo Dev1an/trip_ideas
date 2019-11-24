@@ -29,6 +29,7 @@ class Destination {
     country = map[columnDestinationCountry];
     location = map[columnLocation];
     description = map[columnDescription];
+    pictureURL = map[columnImage];
     otherImagesJSON = map[columnOtherImages];
     scoreBeach = map[columnScoreBeach];
     scoreNature = map[columnScoreNature];
@@ -44,6 +45,7 @@ class Destination {
       columnDestinationCountry: country,
       columnLocation: location,
       columnDescription: description,
+      columnImage: pictureURL,
       columnOtherImages: otherImagesJSON,
       columnScoreBeach: scoreBeach,
       columnScoreNature: scoreNature,

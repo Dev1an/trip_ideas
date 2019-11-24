@@ -76,6 +76,7 @@ class DatabaseHelper {
                 $columnLocation TEXT NOT NULL,
                 $columnDescription TEXT NOT NULL,
                 $columnOtherImages TEXT NOT NULL,
+                $columnImage TEXT NOT NULL,
                 $columnScoreBeach INTEGER NOT NULL,
                 $columnScoreNature INTEGER NOT NULL,
                 $columnScoreCulture INTEGER NOT NULL,
@@ -116,7 +117,7 @@ class DatabaseHelper {
     Database db = await database;
     List<Map> maps = await db.query(tableDestinations,
         columns: [columnId, columnDestinationCity, columnDestinationCountry,
-          columnLocation,columnDescription,columnOtherImages,
+          columnLocation,columnDescription,columnOtherImages,columnImage,
           columnScoreBeach,columnScoreNature,columnScoreCulture,columnScoreShopping,columnScoreNightlife],
         where: '$columnId = ?',
         whereArgs: [id]);

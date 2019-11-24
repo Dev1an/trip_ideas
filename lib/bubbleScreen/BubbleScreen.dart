@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trip_ideas/Database.dart';
 import 'package:trip_ideas/detailScreen/Detail.dart';
-import 'package:trip_ideas/model/BubbleData.dart';
 import 'package:trip_ideas/bubbleScreen/RecommendationUtil.dart';
 import 'package:trip_ideas/model/Parameters.dart';
 import 'package:trip_ideas/model/Destination.dart';
@@ -11,7 +10,6 @@ import 'Bubbles.dart';
 import 'Parameters.dart';
 
 class BubbleScreenState extends State<BubbleScreen> {
-  final List<DestinationBubbleData> data = [];
   final List<Destination> selectedDestinations = [];
   final List<Parameter> parameters = [
     Parameter('Beach', 0.20),

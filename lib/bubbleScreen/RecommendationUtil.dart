@@ -3,7 +3,7 @@ import 'package:trip_ideas/model/Parameters.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'package:trip_ideas/model/pythonAPI.dart';
+import 'package:trip_ideas/model/config.dart';
 
 Future<List<Destination>> getRecommendations(List<Parameter> parameters, Set<int> exclusionSet, int page) async {
   String baseURL;

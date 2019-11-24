@@ -68,11 +68,11 @@ class FavoriteOrVisitedListState extends State<FavoriteOrVisitedList> {
         child: new Row(
           children: <Widget>[
           Container(
-            height: 175,
-            width: 300,
+            height: 125,
+            width: 325,
             decoration: new BoxDecoration(
                 image: new DecorationImage(
-                  fit: BoxFit.fitHeight,
+                  fit: BoxFit.fitWidth,
                   alignment: FractionalOffset.topLeft,
                   image: new NetworkImage(
                       _favoritesOrVisiteds[index].pictureURL),
@@ -100,7 +100,7 @@ class FavoriteOrVisitedListState extends State<FavoriteOrVisitedList> {
           ],
         ),
       ),
-      margin: EdgeInsets.all(10.0)
+      margin: EdgeInsets.all(5.0)
     );
   }
 
@@ -146,8 +146,8 @@ class FavoriteOrVisitedWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     Color color = Theme.of(context).primaryColor;
     return IconButton(
-      icon: Icon(type==FavOrVisEnum.favorite ? Icons.favorite : Icons.check_box),
-      color: color,
+      icon: Icon(Icons.close),
+      color: Colors.black38,
       onPressed: _handleTap,
     );
   }
