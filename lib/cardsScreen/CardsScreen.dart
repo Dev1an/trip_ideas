@@ -84,30 +84,46 @@ class CardsScreenState extends State<CardsScreen> {
       ),
       Expanded(
         flex: 3,
-        child: Container(
-          child: ParameterSliders(
-            parameters: parameters,
-            changeCallback: (changeParameter) {
-              setState(changeParameter);
-            },
-            changeStartCallback: (parameter) {
-              setState(() {
-                characteristicHighlighted = parameter.description;
-              });
-            },
-            changeEndCallback: (parameter) {
-              setState(() {
-                characteristicHighlighted = '';
+        child: Column(
+          children: <Widget>[
+            RaisedButton.icon(
+              color: Colors.lightBlueAccent,
+              icon: Icon(Icons.refresh),
+              label: Text("More..."),
+              onPressed: () {
                 loadRecommendations();
-              });
-            },
-            highlightParameter: (parameterDescription) =>
-                setState(() {
-                  characteristicHighlighted = parameterDescription;
-                }),
-          ),
-          padding: EdgeInsets.only(top: 20),
-        ),
+                page = (page + 1) % 4 ;
+              },
+            ),
+            Expanded(
+              child: Container(
+                child: ParameterSliders(
+                  parameters: parameters,
+                  changeCallback: (changeParameter) {
+                    setState(changeParameter);
+                  },
+                  changeStartCallback: (parameter) {
+                    setState(() {
+                      characteristicHighlighted = parameter.description;
+                    });
+                  },
+                  changeEndCallback: (parameter) {
+                    setState(() {
+                      characteristicHighlighted = '';
+                      loadRecommendations();
+                    });
+                  },
+                  highlightParameter: (parameterDescription) =>
+                      setState(() {
+                        characteristicHighlighted = parameterDescription;
+                      }),
+                ),
+                //padding: EdgeInsets.only(top: 10),
+              ),
+            )
+          ],
+        )
+
       )
     ];
 
@@ -135,8 +151,13 @@ class CardsScreenState extends State<CardsScreen> {
             )
           ],
         ),
-        body: MediaQuery.of(context).orientation == Orientation.portrait ?
-        Column(children: components) : Row(children: components,)
+        body:
+          Container(
+            child: MediaQuery.of(context).orientation == Orientation.portrait ?
+              Column(children: components) : Row(children: components,),
+            color: Color(0x3f81D4FA),
+          )
+
     );
   }
 
@@ -183,7 +204,7 @@ class CardsScreenState extends State<CardsScreen> {
                           LinearProgressIndicator(
                             value: getScoreValue(selectedDestinations[index]),
                             valueColor: AlwaysStoppedAnimation<Color>(scoreColor),
-                            backgroundColor: Colors.grey,
+                            backgroundColor: Colors.white30,
                           ) : Container()
                       )],
                   ),
