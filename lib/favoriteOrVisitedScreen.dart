@@ -58,23 +58,38 @@ class FavoriteOrVisitedListState extends State<FavoriteOrVisitedList> {
   Card _buildItemsForListView(BuildContext context, int index) {
     return Card(
       elevation: 5.0,
-        child: new Row(
-          children: <Widget>[
-            Container(
-              height: 200,
-              width: 300,
-              decoration: new BoxDecoration(
-                  image: new DecorationImage(
-                    fit: BoxFit.fitHeight,
-                    alignment: FractionalOffset.topCenter,
-                    image: new NetworkImage(
-                        _favoritesOrVisiteds[index].pictureURL),
-                  )
-              ), child: Padding(padding: new EdgeInsets.all(10.0),
-              child: Text(
-                _favoritesOrVisiteds[index].destination, softWrap: true,
-                style: TextStyle(color: Colors.white, fontSize: 18),),),),
-            /*Container(
+      child: new Row(
+        children: <Widget>[
+        Container(
+          height: 175,
+          width: 300,
+          decoration: new BoxDecoration(
+              image: new DecorationImage(
+                fit: BoxFit.fitHeight,
+                alignment: FractionalOffset.topLeft,
+                image: new NetworkImage(
+                    _favoritesOrVisiteds[index].pictureURL),
+              )
+          ),
+          child: Padding(
+            padding: new EdgeInsets.all(10.0),
+            child: Stack(
+              children: <Widget>[
+            // Stroked text as border.
+                Text(
+                _favoritesOrVisiteds[index].destination,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 30,
+                shadows: [
+                  Shadow(blurRadius: 3, color: Colors.black),
+                  Shadow(blurRadius: 7, color: Colors.black),
+                ],
+                // Solid text as fill.
+          ),)
+            ],
+      ),),),
+    /*Container(
               width: 250,
               height: 200,
               child: Stack(
@@ -89,10 +104,10 @@ class FavoriteOrVisitedListState extends State<FavoriteOrVisitedList> {
                   fit: BoxFit.fitWidth,),
               ],
             )),*/
-            FavoriteOrVisitedWidget(index: index, type: type,onChanged: _handleFavOrVisChanged)
-          ],
-        ),
-      /*
+        FavoriteOrVisitedWidget(index: index, type: type,onChanged: _handleFavOrVisChanged)
+      ],
+    ),
+    /*
         child: ListTile(
           title:
               Text(_favoritesOrVisiteds[index].destination, style: TextStyle(fontSize: 20)),
