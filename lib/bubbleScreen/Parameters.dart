@@ -40,7 +40,12 @@ class ParameterSliders extends StatelessWidget {
                 onChangeStart: (value) => changeStartCallback(parameter),
                 onChangeEnd: (value) => changeEndCallback(parameter),
               )
-          )
+          ),
+          Radio(
+            value: parameter.description,
+            groupValue: BubbleScreenState.radioValue1,
+            onChanged: highlightParameter,
+          ),
         ],
       ),
       padding: EdgeInsets.symmetric(horizontal: 16),
