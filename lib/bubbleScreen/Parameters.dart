@@ -47,6 +47,7 @@ class ParameterSliders extends StatelessWidget {
             value: parameter,
             groupValue: BubbleScreenState.highlightedParameter,
             onChanged: highlightParameter,
+            activeColor: parameter.color,
           ),
         ],
       ),
