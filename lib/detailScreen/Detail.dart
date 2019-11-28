@@ -335,7 +335,9 @@ class _DetailWidgetState extends State<DetailWidget> {
 
   _loadDetailsOfCurrent() {
     // set dummy values of placeholder destination
-    currentDestination = Destination();
+    final newDestination = Destination();
+    newDestination.id = currentDestination.id;
+    currentDestination = newDestination;
     currentDestination.destination="";
     currentDestination.description="";
     currentDestination.location="";
