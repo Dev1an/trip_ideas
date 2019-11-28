@@ -33,6 +33,8 @@ class ParameterSliders extends StatelessWidget {
           Flexible(
               child: Slider(
                 value: parameter.value,
+                activeColor: parameter.color,
+                inactiveColor: Colors.grey.withOpacity(0.2),
                 min: 0, max: 1,
                 onChanged: (value) {
                   changeCallback(() {parameter.value = value;});
