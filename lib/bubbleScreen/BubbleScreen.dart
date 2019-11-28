@@ -11,13 +11,7 @@ import 'Parameters.dart';
 
 class BubbleScreenState extends State<BubbleScreen> {
   final List<Destination> selectedDestinations = [];
-  final List<Parameter> parameters = [
-    Parameter('Beach', 0.20),
-    Parameter('Nature', 0.90),
-    Parameter('Culture', 0.70),
-    Parameter('Shopping', 0.10),
-    Parameter('Nightlife', 0.30)
-  ];
+  final List<Parameter> parameters = Parameter.exampleParameters;
   int page = 1;
 
   final Set<int> favorites = Set.of([]);
@@ -64,24 +58,7 @@ class BubbleScreenState extends State<BubbleScreen> {
     DatabaseHelper.instance.insertFavorite(destination.reduced());
   }
   
-  static String radioValue1;
-  void _handleRadioValueChange(String value) {
-    setState(() {
-      radioValue1 = value;
-
-      switch (radioValue1) {
-        case "Beach":
-          print("you toggled beach");
-          break;
-        case "Nature":
-          print("you toggled nature");
-          break;
-        case "Culture":
-          print("you toggled culture");
-          break;
-      }
-    });
-  }
+  static Parameter highlightedParameter;
 
   @override
   Widget build(BuildContext context) {
@@ -90,33 +67,32 @@ class BubbleScreenState extends State<BubbleScreen> {
     });
 
     final components = [
-      Builder(
-        builder: (context) => Circles(
-            bubbles: selectedDestinations,
-            markFavorite: (index) {
-              addFavorite(selectedDestinations[index]);
-            },
-            markVisited: (index) {print('mark $index as visited');},
-            openDetail: (index) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        DetailWidget(dest: selectedDestinations[index])
-                ),
-              ).then((value) {
-                // Favorites might have changed while browsing the detail pages
-                // so we refresh the favorites when we get back to the overview
-                loadFavorites();
-              });
-            },
-            onRefresh: () {
-              loadRecommendations();
-              page = (page + 1) % 4 ;
-              print("Load bubbles with settings:");
-              parameters.forEach((parameter) => print("\t- ${parameter.description}:\t${parameter.value}"));
-            }
-        ),
+      Circles(
+        bubbles: selectedDestinations,
+        markFavorite: (index) {
+          addFavorite(selectedDestinations[index]);
+        },
+        markVisited: (index) {print('mark $index as visited');},
+        openDetail: (index) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    DetailWidget(dest: selectedDestinations[index])
+            ),
+          ).then((value) {
+            // Favorites might have changed while browsing the detail pages
+            // so we refresh the favorites when we get back to the overview
+            loadFavorites();
+          });
+        },
+        onRefresh: () {
+          loadRecommendations();
+          page = (page + 1) % 4 ;
+          print("Load bubbles with settings:");
+          parameters.forEach((parameter) => print("\t- ${parameter.description}:\t${parameter.value}"));
+        },
+        highlightedParameter: highlightedParameter,
       ),
       Flexible(
         child: Container(
@@ -127,16 +103,16 @@ class BubbleScreenState extends State<BubbleScreen> {
             },
             changeStartCallback: (parameter) {
               setState(() {
-                radioValue1 = parameter.description;
+                highlightedParameter = parameter;
               });
             },
             changeEndCallback: (parameter) {
               setState(() {
-                radioValue1 = '';
+                highlightedParameter = parameter;
                 loadRecommendations();
               });
             },
-            highlightParameter: (parameterDescription) => setState(() {radioValue1 = parameterDescription;}),
+            highlightParameter: (parameter) => setState(() {highlightedParameter = parameter;})
           ),
           padding: EdgeInsets.only(top: 20),
         ),

@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 
 import 'package:trip_ideas/model/Destination.dart';
+import 'package:trip_ideas/model/Parameters.dart';
 import 'ArcPainter.dart';
-import 'BubbleScreen.dart';
 
 class Circles extends StatefulWidget {
   final List<Destination> bubbles;
@@ -16,17 +16,12 @@ class Circles extends StatefulWidget {
   final void Function(int) markVisited;
   final void Function(int) openDetail;
   final void Function() onRefresh;
+  final Parameter highlightedParameter;
 
-  const Circles({Key key, this.bubbles, this.markFavorite, this.markVisited, this.openDetail, this.onRefresh}) : super(key: key);
+  const Circles({Key key, this.bubbles, this.markFavorite, this.markVisited, this.openDetail, this.onRefresh, this.highlightedParameter}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => CirclesState(
-      bubbles: bubbles,
-      markFavorite: markFavorite,
-      markVisited: markVisited,
-      openDetail: openDetail,
-      onRefresh: onRefresh
-  );
+  State<StatefulWidget> createState() => CirclesState();
 }
 
 class ProxyDrag extends Drag {
@@ -108,13 +103,6 @@ class CirclesState extends State<Circles> with SingleTickerProviderStateMixin {
   double positionOffset = 0;
   double startAngle;
 
-  final List<Destination> bubbles;
-  final void Function(int) markFavorite;
-  final void Function(int) markVisited;
-  final void Function(int) openDetail;
-  final void Function() onRefresh;
-  CirclesState({this.bubbles, this.markFavorite, this.markVisited, this.openDetail, this.onRefresh});
-
   NetworkImage picture;
 
   AnimationController _controller;
@@ -139,18 +127,39 @@ class CirclesState extends State<Circles> with SingleTickerProviderStateMixin {
 
   Animation<double> _animation;
 
-  Align circle({int index, BuildContext context, Destination data}) {
-    int score = 0;
-    Color scoreColor = Colors.orange;
-    switch (BubbleScreenState.radioValue1) {
-      case "Beach":     score = data.scoreBeach; scoreColor = Colors.lightBlueAccent; break;
-      case "Nature":    score = data.scoreNature; scoreColor = Colors.lightGreen;  break;
-      case "Culture":   score = data.scoreCulture; scoreColor = Colors.yellow; break;
-      case "Shopping":  score = data.scoreShopping; scoreColor = Colors.purple; break;
-      case "Nightlife": score = data.scoreNightlife; scoreColor = Colors.pink; break;
-    }
-
+  Align draggableCircle({int index, BuildContext context, Destination data}) {
     final NetworkImage picture = NetworkImage(data.pictureURL);
+
+    final circle = Container(
+      decoration: circleDecoration(picture),
+      margin: EdgeInsets.all(5),
+      padding: EdgeInsets.all(10),
+      child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+
+            children: [
+              FittedBox(
+                fit: BoxFit.fitWidth,
+                child: Text(
+                    data.destination,
+                    style: TextStyle(
+                      color: Colors.white,
+                      shadows: [
+                        Shadow(blurRadius: 3, color: Colors.black),
+                        Shadow(blurRadius: 7, color: Colors.black)
+                      ],
+                      fontSize: 20,
+                    )
+                ),
+              ),
+              if (data.isFavorite) Icon(Icons.favorite, color: Colors.white),
+//                            if (data.isVisited) Icon(Icons.assignment_turned_in, color: Colors.white),
+            ],
+          )
+      ),
+    );
 
     return Align(
         alignment: Alignment(sqrt2 * cos(position + positionOffset + offset * index),
@@ -158,58 +167,19 @@ class CirclesState extends State<Circles> with SingleTickerProviderStateMixin {
         child: FractionallySizedBox(
           child: DraggableBubble(
             data: BubbleReference(index),
-            child:
-            new GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () {
-                  openDetail(index);
-                },
-                child: CustomPaint(
-                  foregroundPainter: ArcPainter(score/100),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.grey,
-                      image: DecorationImage(image: picture, fit: BoxFit.cover),
-                      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 10, offset: Offset(0, 7))]
-                    ),
-                    margin: EdgeInsets.all(5),
-                    padding: EdgeInsets.all(10),
-                    child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-
-                          children: [
-                            FittedBox(
-                              fit: BoxFit.fitWidth,
-                              child: Text(
-                                  data.destination,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    shadows: [
-                                      Shadow(blurRadius: 3, color: Colors.black),
-                                      Shadow(blurRadius: 7, color: Colors.black)
-                                    ],
-                                    fontSize: 20,
-                                  )
-                              ),
-                            ),
-                            if (data.isFavorite) Icon(Icons.favorite, color: Colors.white),
-//                            if (data.isVisited) Icon(Icons.assignment_turned_in, color: Colors.white),
-                          ],
-                        )
-                    ),
-                  ),
-                )
+            child: new GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                widget.openDetail(index);
+              },
+              child: widget.highlightedParameter == null ? circle : CustomPaint(
+                foregroundPainter: ArcPainter(data.parameterValues[widget.highlightedParameter.type]),
+                child: circle,
+              )
             ),
             feedback: Material(
                 child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.grey.withOpacity(0.7),
-                    image: DecorationImage(image: picture, fit: BoxFit.cover)
-                  ),
+                  decoration: circleDecoration(picture),
                   width: 70,
                   height: 70,
                   transform: Matrix4.translationValues(-35, -55, 0),
@@ -245,6 +215,15 @@ class CirclesState extends State<Circles> with SingleTickerProviderStateMixin {
           widthFactor: 0.5,
           heightFactor: 0.5,
         )
+    );
+  }
+
+  BoxDecoration circleDecoration(NetworkImage picture) {
+    return BoxDecoration(
+      shape: BoxShape.circle,
+      color: Colors.grey,
+      image: DecorationImage(image: picture, fit: BoxFit.cover),
+      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 10, offset: Offset(0, 7))]
     );
   }
 
@@ -327,20 +306,20 @@ class CirclesState extends State<Circles> with SingleTickerProviderStateMixin {
               icon: Icons.assignment_turned_in,
               color: Colors.red,
               left: true,
-              acceptor: markVisited
+              acceptor: widget.markVisited
           ),
           backgroundTarget(
               title: 'Favorite',
               icon: Icons.favorite,
               color: Colors.green,
               left: false,
-              acceptor: markFavorite
+              acceptor: widget.markFavorite
           ),
-          for (var index=0; index<min(4, bubbles.length); index ++)
-            circle(
+          for (var index=0; index<min(4, widget.bubbles.length); index ++)
+            draggableCircle(
                 index: index,
                 context: context,
-                data: bubbles[index]
+                data: widget.bubbles[index]
             ),
           Center(
             child: FractionallySizedBox(
@@ -356,7 +335,7 @@ class CirclesState extends State<Circles> with SingleTickerProviderStateMixin {
                   child: Center(child: Text('more...', style: TextStyle(color: Colors.white))),
                 ),
                 onTap: () {
-                  onRefresh();
+                  widget.onRefresh();
                   spin();
                 },
               ),

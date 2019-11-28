@@ -8,7 +8,7 @@ class ParameterSliders extends StatelessWidget {
   final void Function(void Function()) changeCallback;
   final void Function(Parameter) changeStartCallback;
   final void Function(Parameter) changeEndCallback;
-  final void Function(String) highlightParameter;
+  final void Function(Parameter) highlightParameter;
 
   const ParameterSliders({
     Key key,
@@ -27,7 +27,7 @@ class ParameterSliders extends StatelessWidget {
             child: Text(parameter.description),
             onPressed: () {},
             onHighlightChanged: (isHighlighted) {
-             highlightParameter(isHighlighted ? parameter.description : null);
+             highlightParameter(isHighlighted ? parameter : null);
             },
           ),
           Flexible(
@@ -42,8 +42,8 @@ class ParameterSliders extends StatelessWidget {
               )
           ),
           Radio(
-            value: parameter.description,
-            groupValue: BubbleScreenState.radioValue1,
+            value: parameter,
+            groupValue: BubbleScreenState.highlightedParameter,
             onChanged: highlightParameter,
           ),
         ],

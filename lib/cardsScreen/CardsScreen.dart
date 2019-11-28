@@ -17,19 +17,13 @@ class CardsScreen extends StatefulWidget {
 
 class CardsScreenState extends State<CardsScreen> {
   final List<Destination> selectedDestinations = [];
-  final List<Parameter> parameters = [
-    Parameter('Beach', 0.20),
-    Parameter('Nature', 0.90),
-    Parameter('Culture', 0.70),
-    Parameter('Shopping', 0.10),
-    Parameter('Nightlife', 0.30)
-  ];
+  final List<Parameter> parameters = Parameter.exampleParameters;
   int page = 1;
 
   final Set<int> favorites = Set.of([]);
   final Set<int> visited = Set.of([]);
   Color scoreColor;
-  String characteristicHighlighted;
+  Parameter characteristicHighlighted;
 
   CardsScreenState() {
     loadRecommendations();
@@ -104,18 +98,18 @@ class CardsScreenState extends State<CardsScreen> {
                   },
                   changeStartCallback: (parameter) {
                     setState(() {
-                      characteristicHighlighted = parameter.description;
+                      characteristicHighlighted = parameter;
                     });
                   },
                   changeEndCallback: (parameter) {
                     setState(() {
-                      characteristicHighlighted = '';
+                      characteristicHighlighted = null;
                       loadRecommendations();
                     });
                   },
-                  highlightParameter: (parameterDescription) =>
+                  highlightParameter: (parameter) =>
                       setState(() {
-                        characteristicHighlighted = parameterDescription;
+                        characteristicHighlighted = parameter;
                       }),
                 ),
                 //padding: EdgeInsets.only(top: 10),
@@ -200,7 +194,7 @@ class CardsScreenState extends State<CardsScreen> {
                         )),
                       Align(
                         alignment: Alignment.bottomLeft,
-                        child: characteristicHighlighted!= null && characteristicHighlighted!= "" ?
+                        child: characteristicHighlighted!= null ?
                           LinearProgressIndicator(
                             value: getScoreValue(selectedDestinations[index]),
                             valueColor: AlwaysStoppedAnimation<Color>(scoreColor),
@@ -225,7 +219,7 @@ class CardsScreenState extends State<CardsScreen> {
 
   double getScoreValue(Destination destination){
     double score;
-    switch (characteristicHighlighted) {
+    switch (characteristicHighlighted.description) {
       case "Beach":     score = destination.scoreBeach.toDouble()/100; scoreColor = colorBeach; break;
       case "Nature":    score = destination.scoreNature.toDouble()/100; scoreColor = colorNature;   break;
       case "Culture":   score = destination.scoreCulture.toDouble()/100; scoreColor = colorCulture;  break;

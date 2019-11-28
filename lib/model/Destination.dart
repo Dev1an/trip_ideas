@@ -1,6 +1,11 @@
+import 'dart:collection';
+
+import 'package:flutter/material.dart';
 import 'package:trip_ideas/model/DestinationSimple.dart';
 
 import '../Database.dart';
+
+enum ParameterType {beach, nature, culture, shopping, nightlife}
 
 /// Class with all the details of a Destination
 class Destination {
@@ -12,11 +17,7 @@ class Destination {
   String description;
   String pictureURL; // not directly persisted, but included in otherImagesJSON by DetailCacheUtil
   String otherImagesJSON;
-  int scoreBeach;
-  int scoreNature;
-  int scoreCulture;
-  int scoreShopping;
-  int scoreNightlife;
+  HashMap<ParameterType, double> parameterValues = new HashMap();
   bool isFavorite = false;
   bool isVisited = false;
 
@@ -37,6 +38,18 @@ class Destination {
     scoreShopping = map[columnScoreShopping];
     scoreNightlife = map[columnScoreNightlife];
   }
+
+  int get scoreBeach     { return (parameterValues[ParameterType.beach] * 100).round();}
+  int get scoreNature    { return (parameterValues[ParameterType.nature] * 100).round();}
+  int get scoreCulture   { return (parameterValues[ParameterType.culture] * 100).round();}
+  int get scoreShopping  { return (parameterValues[ParameterType.shopping] * 100).round();}
+  int get scoreNightlife { return (parameterValues[ParameterType.nightlife] * 100).round();}
+
+  set scoreBeach(int score)     { parameterValues[ParameterType.beach] = score / 100;}
+  set scoreNature(int score)    { parameterValues[ParameterType.nature] = score / 100;}
+  set scoreCulture(int score)   { parameterValues[ParameterType.culture] = score / 100;}
+  set scoreShopping(int score)  { parameterValues[ParameterType.shopping] = score / 100;}
+  set scoreNightlife(int score) { parameterValues[ParameterType.nightlife] = score / 100;}
 
   // convenience method to create a Map from this Destination object
   Map<String, dynamic> toMap() {
