@@ -171,12 +171,15 @@ class CirclesState extends State<Circles> with SingleTickerProviderStateMixin {
               onTap: () {
                 widget.openDetail(index);
               },
-              child: widget.highlightedParameter == null ? circle : CustomPaint(
-                foregroundPainter: ArcPainter(
-                  length: data.parameterValues[widget.highlightedParameter.type],
-                  color: widget.highlightedParameter.color
-                ),
-                child: circle,
+              child: Opacity(
+                opacity: positionOffset == 0 ? 1 : 0.4,
+                child: widget.highlightedParameter == null ? circle : CustomPaint(
+                  foregroundPainter: ArcPainter(
+                    length: data.parameterValues[widget.highlightedParameter.type],
+                    color: widget.highlightedParameter.color
+                  ),
+                  child: circle,
+                )
               )
             ),
             feedback: Material(
@@ -227,7 +230,7 @@ class CirclesState extends State<Circles> with SingleTickerProviderStateMixin {
     return BoxDecoration(
       shape: BoxShape.circle,
       color: picture == null ? Colors.grey : null,
-      image: DecorationImage(image: picture, fit: BoxFit.cover, colorFilter: positionOffset == 0 ? null : ColorFilter.mode(Colors.black.withOpacity(0.6), BlendMode.dstATop)),
+      image: DecorationImage(image: picture, fit: BoxFit.cover),
       boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 10, offset: Offset(0, 7))],
     );
   }
