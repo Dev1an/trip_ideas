@@ -1,4 +1,3 @@
-import 'dart:core';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
@@ -198,6 +197,9 @@ class CirclesState extends State<Circles> with SingleTickerProviderStateMixin {
               final startLocation = box.globalToLocal(details.globalPosition).translate(-size, -size);
               startAngle = atan2(startLocation.dy, startLocation.dx);
               _controller.stop();
+              setState(() {
+                positionOffset = double.minPositive;
+              });
             },
             updateHook: (details) {
               final RenderBox box = context.findRenderObject();
@@ -224,9 +226,9 @@ class CirclesState extends State<Circles> with SingleTickerProviderStateMixin {
   BoxDecoration circleDecoration(NetworkImage picture) {
     return BoxDecoration(
       shape: BoxShape.circle,
-      color: Colors.grey,
-      image: DecorationImage(image: picture, fit: BoxFit.cover),
-      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 10, offset: Offset(0, 7))]
+      color: picture == null ? Colors.grey : null,
+      image: DecorationImage(image: picture, fit: BoxFit.cover, colorFilter: positionOffset == 0 ? null : ColorFilter.mode(Colors.black.withOpacity(0.6), BlendMode.dstATop)),
+      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 10, offset: Offset(0, 7))],
     );
   }
 
