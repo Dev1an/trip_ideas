@@ -7,8 +7,9 @@ class ArcPainter extends CustomPainter {
   final double length;
   static double width = 7;
   final double boxPosition = width + 3;
+  final Color color;
 
-  ArcPainter(this.length);
+  ArcPainter({this.length, this.color = Colors.blue});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -29,7 +30,7 @@ class ArcPainter extends CustomPainter {
 
     canvas.drawPath(path, paint);
     canvas.drawPath(path, paint
-      ..color = Colors.blue
+      ..color = color
       ..strokeWidth = width - 2
     );
   }

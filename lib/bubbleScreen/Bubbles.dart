@@ -173,7 +173,10 @@ class CirclesState extends State<Circles> with SingleTickerProviderStateMixin {
                 widget.openDetail(index);
               },
               child: widget.highlightedParameter == null ? circle : CustomPaint(
-                foregroundPainter: ArcPainter(data.parameterValues[widget.highlightedParameter.type]),
+                foregroundPainter: ArcPainter(
+                  length: data.parameterValues[widget.highlightedParameter.type],
+                  color: widget.highlightedParameter.color
+                ),
                 child: circle,
               )
             ),
