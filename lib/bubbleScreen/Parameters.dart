@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:trip_ideas/model/Parameters.dart';
 
@@ -23,13 +24,7 @@ class ParameterSliders extends StatelessWidget {
     return Container(
       child: Row(
         children: [
-          RaisedButton(
-            child: Text(parameter.description),
-            onPressed: () {},
-            onHighlightChanged: (isHighlighted) {
-             highlightParameter(isHighlighted ? parameter : null);
-            },
-          ),
+          Text(parameter.description),
           Flexible(
               child: Slider(
                 value: parameter.value,

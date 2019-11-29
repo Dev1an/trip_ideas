@@ -82,8 +82,13 @@ class CirclesState extends State<Circles> with SingleTickerProviderStateMixin {
                     )
                 ),
               ),
-              if (data.isFavorite) Icon(Icons.favorite, color: Colors.white),
-//                            if (data.isVisited) Icon(Icons.assignment_turned_in, color: Colors.white),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (data.isFavorite) Icon(Icons.favorite, color: Colors.white),
+                  if (data.isVisited) Icon(Icons.assignment_turned_in, color: Colors.white),
+                ],
+              )
             ],
           )
       ),

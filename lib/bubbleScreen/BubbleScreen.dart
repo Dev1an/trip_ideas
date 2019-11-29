@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/physics.dart';
 import 'package:trip_ideas/Database.dart';
 import 'package:trip_ideas/detailScreen/Detail.dart';
 import 'package:trip_ideas/bubbleScreen/RecommendationUtil.dart';
@@ -15,10 +16,12 @@ class BubbleScreenState extends State<BubbleScreen> {
   int page = 1;
 
   final Set<int> favorites = Set.of([]);
+  final Set<int> visited = Set.of([]);
 
   BubbleScreenState() {
     loadRecommendations();
     loadFavorites();
+    loadVisited();
   }
 
   void loadFavorites() {
@@ -26,6 +29,15 @@ class BubbleScreenState extends State<BubbleScreen> {
       setState(() {
         this.favorites.clear();
         this.favorites.addAll(favorites.map((destination) => destination.id));
+      });
+    });
+  }
+
+  void loadVisited() {
+    DatabaseHelper.instance.queryAllVisited().then((visited) {
+      setState(() {
+        this.visited.clear();
+        this.visited.addAll(visited.map((destination) => destination.id));
       });
     });
   }
@@ -57,13 +69,23 @@ class BubbleScreenState extends State<BubbleScreen> {
     // Save record to local DataBase
     DatabaseHelper.instance.insertFavorite(destination.reduced());
   }
-  
+  void addVisited(Destination destination) {
+    // Update state
+    setState(() {
+      visited.add(destination.id);
+    });
+
+    // Save record to local DataBase
+    DatabaseHelper.instance.insertVisited(destination.reduced());
+  }
+
   static Parameter highlightedParameter;
 
   @override
   Widget build(BuildContext context) {
     selectedDestinations.forEach((destination) {
       destination.isFavorite = favorites.contains(destination.id);
+      destination.isVisited = visited.contains(destination.id);
     });
 
     final components = [
@@ -72,7 +94,9 @@ class BubbleScreenState extends State<BubbleScreen> {
         markFavorite: (index) {
           addFavorite(selectedDestinations[index]);
         },
-        markVisited: (index) {print('mark $index as visited');},
+        markVisited: (index) {
+          addVisited(selectedDestinations[index]);
+        },
         openDetail: (index) {
           Navigator.push(
             context,
@@ -84,6 +108,7 @@ class BubbleScreenState extends State<BubbleScreen> {
             // Favorites might have changed while browsing the detail pages
             // so we refresh the favorites when we get back to the overview
             loadFavorites();
+            loadVisited();
           });
         },
         onRefresh: () {
