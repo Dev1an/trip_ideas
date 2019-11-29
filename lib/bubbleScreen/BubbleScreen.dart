@@ -48,7 +48,7 @@ class BubbleScreenState extends State<BubbleScreen> {
   */
   void loadRecommendations() {
     //getShown().then((shownDestinations) {
-      getRecommendations(parameters, favorites,page).then((destinations) {
+      getRecommendations(parameters, favorites.union(visited),page).then((destinations) {
         setState(() {
           selectedDestinations.clear();
           selectedDestinations.addAll(destinations);
@@ -132,9 +132,9 @@ class BubbleScreenState extends State<BubbleScreen> {
               });
             },
             changeEndCallback: (parameter) {
+              loadRecommendations();
               setState(() {
-                highlightedParameter = parameter;
-                loadRecommendations();
+                highlightedParameter = null;
               });
             },
             highlightParameter: (parameter) => setState(() {highlightedParameter = parameter;})
@@ -149,7 +149,15 @@ class BubbleScreenState extends State<BubbleScreen> {
           actions: <Widget>[
             new IconButton(
               icon: new Icon(Icons.assignment_turned_in),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => FavoriteOrVisitedList(type: FavOrVisEnum.visited)),
+                ).then((e) {
+                  loadFavorites();
+                  loadVisited();
+                });
+              },
             ),
             new IconButton(
               icon: new Icon(Icons.favorite),
@@ -157,7 +165,10 @@ class BubbleScreenState extends State<BubbleScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => FavoriteOrVisitedList(type: FavOrVisEnum.favorite)),
-                ).then((e) => {loadRecommendations()}); // Refresh on back
+                ).then((e) {
+                  loadFavorites();
+                  loadVisited();
+                }); // Refresh on back
               },
             ),
             new IconButton(

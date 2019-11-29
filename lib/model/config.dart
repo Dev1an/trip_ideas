@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 const LOCALHOST = false;
-const BUBBLESCREEN = true;
+bool BUBBLESCREEN = true;
 const Color colorBeach = Color(0xff81D4FA);
 const Color colorNature = Color(0xffA5D6A7);
 const Color colorCulture= Color(0xffFFEB3B);
