@@ -14,7 +14,7 @@ class ArcPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint()
-      ..color = Colors.white
+      ..color = Colors.black.withOpacity(0.4)
       ..style = PaintingStyle.stroke
       ..strokeWidth = width
       ..strokeCap = StrokeCap.round;
@@ -28,7 +28,16 @@ class ArcPainter extends CustomPainter {
         false
     );
 
-    canvas.drawPath(path, paint);
+    Path back = Path();
+    back.arcTo(Rect.fromLTRB(
+        boxPosition, boxPosition,
+        size.width - boxPosition, size.height - boxPosition),
+        0,
+        2*pi - 0.00001,
+        false
+    );
+
+    canvas.drawPath(back, paint);
     canvas.drawPath(path, paint
       ..color = color
       ..strokeWidth = width - 2
