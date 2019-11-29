@@ -312,14 +312,14 @@ class CirclesState extends State<Circles> with SingleTickerProviderStateMixin {
           backgroundTarget(
               title: 'Visited',
               icon: Icons.assignment_turned_in,
-              color: Colors.red,
+              color: Colors.orange,
               left: true,
               acceptor: widget.markVisited
           ),
           backgroundTarget(
               title: 'Favorite',
               icon: Icons.favorite,
-              color: Colors.green,
+              color: Colors.deepPurple,
               left: false,
               acceptor: widget.markFavorite
           ),
