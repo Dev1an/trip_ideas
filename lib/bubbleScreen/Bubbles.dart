@@ -174,7 +174,7 @@ class CirclesState extends State<Circles> with SingleTickerProviderStateMixin {
           child: DragTarget<BubbleReference>(
             builder: (context, candidateData, rejectedData) {
               final isHovered = candidateData.length == 1;
-              final primaryColor = isHovered ? Colors.white : Colors.grey.withOpacity(0.5);
+              final primaryColor = isHovered ? Colors.white : isInDragMode ? Colors.black.withOpacity(0.8) : Colors.grey.withOpacity(0.5);
               return Container(
                 color: isHovered ? color : null,
                 child: Row(
