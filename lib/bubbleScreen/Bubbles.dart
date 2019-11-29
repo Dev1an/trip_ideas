@@ -8,6 +8,7 @@ import 'package:flutter/physics.dart';
 import 'package:trip_ideas/model/Destination.dart';
 import 'package:trip_ideas/model/Parameters.dart';
 import 'ArcPainter.dart';
+import 'EnhancedDraggable.dart';
 
 class Circles extends StatefulWidget {
   final List<Destination> bubbles;
@@ -23,84 +24,12 @@ class Circles extends StatefulWidget {
   State<StatefulWidget> createState() => CirclesState();
 }
 
-class ProxyDrag extends Drag {
-  final Drag proxy;
-  final void Function(DragUpdateDetails) updateHook;
-  final void Function(DragUpdateDetails) startHook;
-  ProxyDrag({this.proxy, this.updateHook, this.startHook}) : super();
-  bool inProgress = false;
-
-  void update(DragUpdateDetails details) {
-    if (inProgress == false) {
-      startHook(details);
-      inProgress = true;
-    } else {
-      updateHook(details);
-    }
-    proxy.update(details);
-  }
-
-  void end(DragEndDetails details) {
-    proxy.end(details);
-  }
-
-  void cancel() {proxy.cancel();}
-}
-class DraggableBubble<T> extends Draggable<T> {
-  final void Function(DragUpdateDetails) updateHook;
-  final void Function(DragUpdateDetails) startHook;
-
-  @override
-  MultiDragGestureRecognizer<MultiDragPointerState> createRecognizer(GestureMultiDragStartCallback onStart) {
-    return ImmediateMultiDragGestureRecognizer()..onStart = (offset) {
-      return ProxyDrag(
-          proxy: onStart(offset),
-          updateHook: updateHook,
-          startHook: startHook
-      );
-    };
-  }
-
-  DraggableBubble({
-    Key key,
-    @required Widget child,
-    @required Widget feedback,
-    this.updateHook,
-    this.startHook,
-    T data,
-    Axis axis,
-    Widget childWhenDragging,
-    Offset feedbackOffset = Offset.zero,
-    DragAnchor dragAnchor = DragAnchor.child,
-    int maxSimultaneousDrags,
-    VoidCallback onDragStarted,
-    DraggableCanceledCallback onDraggableCanceled,
-    DragEndCallback onDragEnd,
-    VoidCallback onDragCompleted,
-    bool ignoringFeedbackSemantics = true,
-  }) : super(
-    key: key,
-    child: child,
-    feedback: feedback,
-    data: data,
-    axis: axis,
-    childWhenDragging: childWhenDragging,
-    feedbackOffset: feedbackOffset,
-    dragAnchor: dragAnchor,
-    maxSimultaneousDrags: maxSimultaneousDrags,
-    onDragStarted: onDragStarted,
-    onDraggableCanceled: onDraggableCanceled,
-    onDragEnd: onDragEnd,
-    onDragCompleted: onDragCompleted,
-    ignoringFeedbackSemantics: ignoringFeedbackSemantics,
-  );
-}
-
 class CirclesState extends State<Circles> with SingleTickerProviderStateMixin {
   static final double offset = pi/2;
   double position = pi/4;
   double positionOffset = 0;
   double startAngle;
+  bool isInDragMode = false;
 
   NetworkImage picture;
 
@@ -172,7 +101,7 @@ class CirclesState extends State<Circles> with SingleTickerProviderStateMixin {
                 widget.openDetail(index);
               },
               child: Opacity(
-                opacity: positionOffset == 0 ? 1 : 0.4,
+                opacity: isInDragMode ? 0.4 : 1,
                 child: widget.highlightedParameter == null ? circle : CustomPaint(
                   foregroundPainter: ArcPainter(
                     length: data.parameterValues[widget.highlightedParameter.type],
@@ -201,7 +130,7 @@ class CirclesState extends State<Circles> with SingleTickerProviderStateMixin {
               startAngle = atan2(startLocation.dy, startLocation.dx);
               _controller.stop();
               setState(() {
-                positionOffset = double.minPositive;
+                isInDragMode = true;
               });
             },
             updateHook: (details) {
@@ -218,6 +147,7 @@ class CirclesState extends State<Circles> with SingleTickerProviderStateMixin {
               position += positionOffset;
               positionOffset = 0;
               stickToQuarterAngle();
+              isInDragMode = false;
             },
           ),
           widthFactor: 0.5,
