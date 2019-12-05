@@ -144,7 +144,6 @@ class FavoriteOrVisitedWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color color = Theme.of(context).primaryColor;
     return IconButton(
       icon: Icon(Icons.close),
       color: Colors.black38,

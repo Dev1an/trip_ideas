@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/physics.dart';
 import 'package:trip_ideas/Database.dart';
-import 'package:trip_ideas/configScreen.dart';
 import 'package:trip_ideas/detailScreen/Detail.dart';
 import 'package:trip_ideas/bubbleScreen/RecommendationUtil.dart';
-import 'package:trip_ideas/main.dart';
 import 'package:trip_ideas/model/Parameters.dart';
 import 'package:trip_ideas/model/Destination.dart';
 import 'package:trip_ideas/FireStore.dart';
@@ -64,6 +61,7 @@ class BubbleScreenState extends State<BubbleScreen> {
   }
 
   void addFavorite(Destination destination) {
+    logAction("Mr. User",MSG_MARK_FAVORITE_HOME, "BubblesScreen");
     // Update state
     setState(() {
       favorites.add(destination.id);
@@ -73,6 +71,7 @@ class BubbleScreenState extends State<BubbleScreen> {
     DatabaseHelper.instance.insertFavorite(destination.reduced());
   }
   void addVisited(Destination destination) {
+    logAction("Mr. User",MSG_MARK_VISITED_HOME, "BubblesScreen");
     // Update state
     setState(() {
       visited.add(destination.id);
@@ -101,6 +100,7 @@ class BubbleScreenState extends State<BubbleScreen> {
           addVisited(selectedDestinations[index]);
         },
         openDetail: (index) {
+          logAction("Mr. User",MSG_NAVIGATE_TO_DETAIL, "BubbleScreen");
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -110,6 +110,7 @@ class BubbleScreenState extends State<BubbleScreen> {
           ).then((value) {
             // Favorites might have changed while browsing the detail pages
             // so we refresh the favorites when we get back to the overview
+            logAction("Mr. User",MSG_NAVIGATE_TO_HOME, "BubbleScreen");
             loadFavorites();
             loadVisited();
           });
@@ -120,7 +121,7 @@ class BubbleScreenState extends State<BubbleScreen> {
 
           print("Load bubbles with settings:");
           parameters.forEach((parameter) => print("\t- ${parameter.description}:\t${parameter.value}"));
-          logAction("Mr. User","More button clicked", "BubbleScreen");
+          logAction("Mr. User",MSG_MORE_BUTTON, "BubbleScreen");
         },
         highlightedParameter: highlightedParameter,
       ),
@@ -155,10 +156,12 @@ class BubbleScreenState extends State<BubbleScreen> {
             new IconButton(
               icon: new Icon(Icons.assignment_turned_in),
               onPressed: () {
+                logAction("Mr. User",MSG_NAVIGATE_TO_VISITED, "BubbleScreen");
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => FavoriteOrVisitedList(type: FavOrVisEnum.visited)),
                 ).then((e) {
+                  logAction("Mr. User",MSG_NAVIGATE_TO_HOME, "BubbleScreen");
                   loadFavorites();
                   loadVisited();
                 });
@@ -167,10 +170,12 @@ class BubbleScreenState extends State<BubbleScreen> {
             new IconButton(
               icon: new Icon(Icons.favorite),
               onPressed: () {
+                logAction("Mr. User",MSG_NAVIGATE_TO_FAVORITES, "BubbleScreen");
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => FavoriteOrVisitedList(type: FavOrVisEnum.favorite)),
                 ).then((e) {
+                  logAction("Mr. User",MSG_NAVIGATE_TO_HOME, "BubbleScreen");
                   loadFavorites();
                   loadVisited();
                 }); // Refresh on back

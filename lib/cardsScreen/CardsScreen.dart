@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:trip_ideas/FireStore.dart';
 import 'package:trip_ideas/bubbleScreen/Parameters.dart';
 import 'package:trip_ideas/bubbleScreen/RecommendationUtil.dart';
 import 'package:trip_ideas/detailScreen/Detail.dart';
 import 'package:trip_ideas/detailScreen/DetailCacheUtil.dart';
-import 'package:trip_ideas/main.dart';
 import 'package:trip_ideas/model/Parameters.dart';
 import 'package:trip_ideas/model/Destination.dart';
 import 'package:trip_ideas/Database.dart';
 import 'package:trip_ideas/model/config.dart';
 
-import '../configScreen.dart';
 import '../favoriteOrVisitedScreen.dart';
 
 class CardsScreen extends StatefulWidget {
@@ -93,6 +92,7 @@ class CardsScreenState extends State<CardsScreen> {
               onPressed: () {
                 page = (page + 1) % 4 ;
                 loadRecommendations();
+                logAction("Mr. User",MSG_MORE_BUTTON, "CardsScreen");
               },
             ),
             Expanded(
@@ -134,19 +134,27 @@ class CardsScreenState extends State<CardsScreen> {
             new IconButton(
               icon: new Icon(Icons.assignment_turned_in),
               onPressed: () {
+                logAction("Mr. User",MSG_NAVIGATE_TO_VISITED, "CardsScreen");
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => FavoriteOrVisitedList(type: FavOrVisEnum.visited)),
-                ).then((e) => {loadRecommendations()}); // Refresh on back
+                ).then((e) => {
+                  logAction("Mr. User",MSG_NAVIGATE_TO_HOME, "CardsScreen"),
+                  loadRecommendations()
+                }); // Refresh on back
               },
             ),
             new IconButton(
               icon: new Icon(Icons.favorite),
               onPressed: () {
+                logAction("Mr. User",MSG_NAVIGATE_TO_FAVORITES, "CardsScreen");
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => FavoriteOrVisitedList(type: FavOrVisEnum.favorite)),
-                ).then((e) => {loadRecommendations()}); // Refresh on back
+                ).then((e) => {
+                  logAction("Mr. User",MSG_NAVIGATE_TO_HOME, "CardsScreen"),
+                  loadRecommendations()
+                }); // Refresh on back
               },
             ),
             widget.configButton
@@ -167,10 +175,14 @@ class CardsScreenState extends State<CardsScreen> {
         elevation: 5.0,
         child: new InkWell(
           onTap: () {
+            logAction("Mr. User",MSG_NAVIGATE_TO_DETAIL, "CardsScreen");
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => DetailWidget(dest:selectedDestinations[index])),
-            ).then((e) => {loadRecommendations()});
+            ).then((e) => {
+            logAction("Mr. User",MSG_NAVIGATE_TO_HOME, "BubbleScreen"),
+              loadRecommendations()
+            });
           },
           child: new Row(
             children: <Widget>[
@@ -246,6 +258,7 @@ class CardsScreenState extends State<CardsScreen> {
         favorites.add(destinationID);
         addFavorite(dest);
       }
+      logAction("Mr. User",MSG_MARK_FAVORITE_HOME, "CardsScreen");
     });
   }
 
@@ -259,6 +272,7 @@ class CardsScreenState extends State<CardsScreen> {
         visited.add(destinationID);
         addVisited(dest);
       }
+      logAction("Mr. User",MSG_MARK_VISITED_HOME, "CardsScreen");
     });
   }
 }

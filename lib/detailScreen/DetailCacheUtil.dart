@@ -88,14 +88,14 @@ Future<Destination> getDetailsOfDestination(int destID) async {
   if (statusCode == HttpStatus.ok) {
     var data = json.decode(response.body);
     print(data);
-    var raw_destination = data[0];
+    var rawDestination = data[0];
     destination = new Destination();
     destination.id = destID;
-    destination.country = raw_destination['Country'];
-    destination.destination = raw_destination['Destination'];
-    destination.description = raw_destination['Description'];
-    destination.location = raw_destination['Location'];
-    String images = raw_destination['Other images'];
+    destination.country = rawDestination['Country'];
+    destination.destination = rawDestination['Destination'];
+    destination.description = rawDestination['Description'];
+    destination.location = rawDestination['Location'];
+    String images = rawDestination['Other images'];
     List<String> imagesList = images.substring(1, images.length - 1).split(", ");
     //print(imagesList.runtimeType);
     //print(imagesList.length);
@@ -105,12 +105,12 @@ Future<Destination> getDetailsOfDestination(int destID) async {
     //imagesList.add(raw_destination['Front image']);
     //print(imagesList);
     destination.otherImagesJSON = imagesList.toString();
-    destination.pictureURL = raw_destination['Front image'];
-    destination.scoreBeach = raw_destination['Beach score'];
-    destination.scoreNature = raw_destination['Nature score'];
-    destination.scoreCulture = raw_destination['Culture score'];
-    destination.scoreShopping = raw_destination['Shopping score'];
-    destination.scoreNightlife = raw_destination['Nightlife score'];
+    destination.pictureURL = rawDestination['Front image'];
+    destination.scoreBeach = rawDestination['Beach score'];
+    destination.scoreNature = rawDestination['Nature score'];
+    destination.scoreCulture = rawDestination['Culture score'];
+    destination.scoreShopping = rawDestination['Shopping score'];
+    destination.scoreNightlife = rawDestination['Nightlife score'];
     // ADD TO CACHE
     addDestinationToCache(destination);
 

@@ -1,10 +1,10 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:http/http.dart' as http;
+//import 'package:http/http.dart' as http;
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:trip_ideas/FireStore.dart';
 import 'package:trip_ideas/model/config.dart';
 
 import '../model/Destination.dart';
@@ -30,7 +30,7 @@ class _DetailWidgetState extends State<DetailWidget> {
     this.currentDestination = dest;
   }
 
-  int PHOTOS_AMOUNT = 1;
+  int photosAmount = 1;
   int currentDestID;
   Destination currentDestination;
   String distanceField = "- km";
@@ -48,6 +48,7 @@ class _DetailWidgetState extends State<DetailWidget> {
       _favorite = newValue;
       if(_favorite) addFavorite(currentDestination);
       else deleteFavorite(currentDestination);
+      logAction("Mr. User",MSG_MARK_FAVORITE_DETAIL, "some screen");
     });
   }
 
@@ -58,6 +59,7 @@ class _DetailWidgetState extends State<DetailWidget> {
       _visited = newValue;
       if(_visited) addVisited(currentDestination);
       else deleteVisited(currentDestination);
+      logAction("Mr. User",MSG_MARK_VISITED_DETAIL, "some screen");
     });
   }
 
@@ -79,9 +81,9 @@ class _DetailWidgetState extends State<DetailWidget> {
       if(currentDestination.otherImagesJSON!="" && currentDestination.otherImagesJSON!= "[]")
         photoUrls.addAll(currentDestination.otherImagesJSON.substring(1,currentDestination.otherImagesJSON.length-1).split(", "));
       print("After adding others: "+photoUrls.toString());
-      if (photoUrls.length > 1 && photoUrls.length < 6 ) PHOTOS_AMOUNT = photoUrls.length;
-      if (photoUrls.length >= 6) PHOTOS_AMOUNT = 5;
-      if (photoUrls.length <= 1) PHOTOS_AMOUNT = 1;
+      if (photoUrls.length > 1 && photoUrls.length < 6 ) photosAmount = photoUrls.length;
+      if (photoUrls.length >= 6) photosAmount = 5;
+      if (photoUrls.length <= 1) photosAmount = 1;
       //PHOTOS_AMOUNT = photoUrls.length > PHOTOS_AMOUNT ? PHOTOS_AMOUNT : photoUrls.length;
     }
     // Image carousel
@@ -98,7 +100,7 @@ class _DetailWidgetState extends State<DetailWidget> {
                       child: CircularProgressIndicator()),
                 ));
         },
-        itemCount: PHOTOS_AMOUNT,
+        itemCount: photosAmount,
         viewportFraction: 0.8,
         scale: 0.9,
         pagination: new SwiperPagination(),
@@ -147,12 +149,10 @@ class _DetailWidgetState extends State<DetailWidget> {
     );
 
     // Button row
-    Color color = Theme.of(context).primaryColor;
     Widget buttonSection = Container(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildButtonColumn(color, Icons.map, 'Location'),
           FavoriteWidget(
               favorite: _favorite, onChanged: _handleFavoriteChanged),
           VisitedWidget(visited: _visited, onChanged: _handleVisitedChanged),
@@ -189,19 +189,27 @@ class _DetailWidgetState extends State<DetailWidget> {
             new IconButton(
               icon: new Icon(Icons.assignment_turned_in),
               onPressed: () {
+                logAction("Mr. User",MSG_NAVIGATE_TO_VISITED, "some screen");
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => FavoriteOrVisitedList(type: FavOrVisEnum.visited)),
-                ).then((e) => {_loadDetailsOfCurrent()}); // Refresh on back
+                ).then((e) => {
+                  logAction("Mr. User",MSG_NAVIGATE_TO_DETAIL, "some screen"),
+                  _loadDetailsOfCurrent()
+                }); // Refresh on back
               },
             ),
             new IconButton(
               icon: new Icon(Icons.favorite),
               onPressed: () {
+                logAction("Mr. User",MSG_NAVIGATE_TO_FAVORITES, "some screen"); //TODO global var?
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => FavoriteOrVisitedList(type: FavOrVisEnum.favorite)),
-                ).then((e) => {_loadDetailsOfCurrent()}); // Refresh on back
+                ).then((e) => {
+                logAction("Mr. User",MSG_NAVIGATE_TO_DETAIL, "some screen"),
+                  _loadDetailsOfCurrent()
+                }); // Refresh on back
               },
             )
           ],
@@ -237,37 +245,8 @@ class _DetailWidgetState extends State<DetailWidget> {
     );
   }
 
-  // Helper method to create columns
-  Column _buildButtonColumn(Color color, IconData icon, String label) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          margin: const EdgeInsets.only(top: 0),
-          padding: EdgeInsets.all(0),
-          child: IconButton(
-            icon: Icon(icon),
-            color: color,
-            onPressed: null,
-          ),
-        ),
-        Container(
-          margin: const EdgeInsets.only(top: 8),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-              color: color,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   // Helper method to retrieve images
+  /*
   Future<List<String>> getImageUrls(String city) async {
     String exlude = "+-woman+-animal+-flower+-meal+-postcard+-door+-painting";
     int resultLimit = 40;
@@ -295,6 +274,7 @@ class _DetailWidgetState extends State<DetailWidget> {
     }
     return list;
   }
+  */
 
   // Helper method to retrieve the distance between the current location and the destination location
   void loadPosition(String destLocation) async {

@@ -1,6 +1,5 @@
 import 'dart:collection';
 
-import 'package:flutter/material.dart';
 import 'package:trip_ideas/model/DestinationSimple.dart';
 
 import '../Database.dart';
