@@ -1,7 +1,5 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-//import 'package:http/http.dart' as http;
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:trip_ideas/FireStore.dart';
@@ -18,6 +16,7 @@ import 'custom_icons.dart';
 
 class DetailWidget extends StatefulWidget {
   final Destination dest;
+  static DateTime showingStart; // start timestamp that screen is showing
   DetailWidget({Key key, @required this.dest}) : super(key: key);
 
   @override
@@ -28,7 +27,9 @@ class _DetailWidgetState extends State<DetailWidget> {
 
   _DetailWidgetState(Destination dest) {
     this.currentDestination = dest;
+    DetailWidget.showingStart = new DateTime.now();
   }
+
 
   int photosAmount = 1;
   int currentDestID;
@@ -189,12 +190,15 @@ class _DetailWidgetState extends State<DetailWidget> {
             new IconButton(
               icon: new Icon(Icons.assignment_turned_in),
               onPressed: () {
+                int screenTime = (new DateTime.now()).difference(DetailWidget.showingStart).inSeconds;
+                logAction("Mr. User",MSG_TIME_ON_DETAIL+screenTime.toString(),"some screen");
                 logAction("Mr. User",MSG_NAVIGATE_TO_VISITED, "some screen");
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => FavoriteOrVisitedList(type: FavOrVisEnum.visited)),
                 ).then((e) => {
                   logAction("Mr. User",MSG_NAVIGATE_TO_DETAIL, "some screen"),
+                  DetailWidget.showingStart = new DateTime.now(),
                   _loadDetailsOfCurrent()
                 }); // Refresh on back
               },
@@ -202,12 +206,15 @@ class _DetailWidgetState extends State<DetailWidget> {
             new IconButton(
               icon: new Icon(Icons.favorite),
               onPressed: () {
+                int screenTime = (new DateTime.now()).difference(DetailWidget.showingStart).inSeconds;
+                logAction("Mr. User",MSG_TIME_ON_DETAIL+screenTime.toString(),"some screen");
                 logAction("Mr. User",MSG_NAVIGATE_TO_FAVORITES, "some screen"); //TODO global var?
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => FavoriteOrVisitedList(type: FavOrVisEnum.favorite)),
                 ).then((e) => {
-                logAction("Mr. User",MSG_NAVIGATE_TO_DETAIL, "some screen"),
+                  logAction("Mr. User",MSG_NAVIGATE_TO_DETAIL, "some screen"),
+                  DetailWidget.showingStart = new DateTime.now(),
                   _loadDetailsOfCurrent()
                 }); // Refresh on back
               },

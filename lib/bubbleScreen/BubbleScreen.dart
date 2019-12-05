@@ -14,11 +14,13 @@ class BubbleScreenState extends State<BubbleScreen> {
   final List<Destination> selectedDestinations = [];
   final List<Parameter> parameters = Parameter.exampleParameters;
   int page = 0;
+  DateTime showingStart; // start timestamp that screen is showing
 
   final Set<int> favorites = Set.of([]);
   final Set<int> visited = Set.of([]);
 
   BubbleScreenState() {
+    showingStart = new DateTime.now();
     loadRecommendations();
     loadFavorites();
     loadVisited();
@@ -100,6 +102,8 @@ class BubbleScreenState extends State<BubbleScreen> {
           addVisited(selectedDestinations[index]);
         },
         openDetail: (index) {
+          int screenTime = (new DateTime.now()).difference(showingStart).inSeconds;
+          logAction("Mr. User",MSG_TIME_ON_HOME+screenTime.toString(),"BubbleScreen");
           logAction("Mr. User",MSG_NAVIGATE_TO_DETAIL, "BubbleScreen");
           Navigator.push(
             context,
@@ -110,6 +114,9 @@ class BubbleScreenState extends State<BubbleScreen> {
           ).then((value) {
             // Favorites might have changed while browsing the detail pages
             // so we refresh the favorites when we get back to the overview
+            showingStart = new DateTime.now();
+            int screenTime = (new DateTime.now()).difference(DetailWidget.showingStart).inSeconds;
+            logAction("Mr. User",MSG_TIME_ON_DETAIL+screenTime.toString(),"BubbleScreen");
             logAction("Mr. User",MSG_NAVIGATE_TO_HOME, "BubbleScreen");
             loadFavorites();
             loadVisited();
@@ -156,11 +163,14 @@ class BubbleScreenState extends State<BubbleScreen> {
             new IconButton(
               icon: new Icon(Icons.assignment_turned_in),
               onPressed: () {
+                int screenTime = (new DateTime.now()).difference(showingStart).inSeconds;
+                logAction("Mr. User",MSG_TIME_ON_HOME+screenTime.toString(),"BubbleScreen");
                 logAction("Mr. User",MSG_NAVIGATE_TO_VISITED, "BubbleScreen");
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => FavoriteOrVisitedList(type: FavOrVisEnum.visited)),
                 ).then((e) {
+                  showingStart = new DateTime.now();
                   logAction("Mr. User",MSG_NAVIGATE_TO_HOME, "BubbleScreen");
                   loadFavorites();
                   loadVisited();
@@ -170,11 +180,14 @@ class BubbleScreenState extends State<BubbleScreen> {
             new IconButton(
               icon: new Icon(Icons.favorite),
               onPressed: () {
+                int screenTime = (new DateTime.now()).difference(showingStart).inSeconds;
+                logAction("Mr. User",MSG_TIME_ON_HOME+screenTime.toString(),"BubbleScreen");
                 logAction("Mr. User",MSG_NAVIGATE_TO_FAVORITES, "BubbleScreen");
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => FavoriteOrVisitedList(type: FavOrVisEnum.favorite)),
                 ).then((e) {
+                  showingStart = new DateTime.now();
                   logAction("Mr. User",MSG_NAVIGATE_TO_HOME, "BubbleScreen");
                   loadFavorites();
                   loadVisited();

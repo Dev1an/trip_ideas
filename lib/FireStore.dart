@@ -3,14 +3,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 final databaseReference = Firestore.instance;
 
 const String MSG_MORE_BUTTON = "More button clicked";
-const String MSG_MARK_FAVORITE_HOME = "Marked dest as favorite in homescreen";
-const String MSG_MARK_VISITED_HOME = "Marked dest as visited in homescreen";
-const String MSG_MARK_FAVORITE_DETAIL = "Marked dest as favorite in detailscreen";
-const String MSG_MARK_VISITED_DETAIL = "Marked dest as visited in detailscreen";
-const String MSG_NAVIGATE_TO_HOME = "Navigated to homescreen";
-const String MSG_NAVIGATE_TO_DETAIL = "Navigated to detailscreen";
+const String MSG_MARK_FAVORITE_HOME = "Marked dest as favorite in home screen";
+const String MSG_MARK_VISITED_HOME = "Marked dest as visited in home screen";
+const String MSG_MARK_FAVORITE_DETAIL = "Marked dest as favorite in detail screen";
+const String MSG_MARK_VISITED_DETAIL = "Marked dest as visited in detail screen";
+const String MSG_NAVIGATE_TO_HOME = "Navigated to home screen";
+const String MSG_NAVIGATE_TO_DETAIL = "Navigated to detail screen";
 const String MSG_NAVIGATE_TO_FAVORITES = "Navigated to favorites";
 const String MSG_NAVIGATE_TO_VISITED = "Navigated to visited";
+const String MSG_TIME_ON_DETAIL = "Stayed on detail screen for (seconds) ";
+const String MSG_TIME_ON_HOME = "Stayed on home screen for (seconds) ";
 
 void logAction(String user, String message, String screen) async {
   String timeNow = new DateTime.now().toIso8601String();
