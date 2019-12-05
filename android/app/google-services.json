@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1015166813145",
+    "firebase_url": "https://tripideas-f9f3a.firebaseio.com",
+    "project_id": "tripideas-f9f3a",
+    "storage_bucket": "tripideas-f9f3a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1015166813145:android:5502c333fed83f28210fc8",
+        "android_client_info": {
+          "package_name": "com.example.trip_ideas"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1015166813145-alb4809u8kaqoa8ujn3iqj1bpogn1c2m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBK2ZCBhiC_-j5WecAfZD3xvcPlRciIy6Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1015166813145-alb4809u8kaqoa8ujn3iqj1bpogn1c2m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

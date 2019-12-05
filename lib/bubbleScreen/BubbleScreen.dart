@@ -5,6 +5,7 @@ import 'package:trip_ideas/detailScreen/Detail.dart';
 import 'package:trip_ideas/bubbleScreen/RecommendationUtil.dart';
 import 'package:trip_ideas/model/Parameters.dart';
 import 'package:trip_ideas/model/Destination.dart';
+import 'package:trip_ideas/FireStore.dart';
 
 import '../favoriteOrVisitedScreen.dart';
 import 'Bubbles.dart';
@@ -116,6 +117,7 @@ class BubbleScreenState extends State<BubbleScreen> {
           page = (page + 1) % 4 ;
           print("Load bubbles with settings:");
           parameters.forEach((parameter) => print("\t- ${parameter.description}:\t${parameter.value}"));
+          logAction("Mr. User","More button clicked", "BubbleScreen");
         },
         highlightedParameter: highlightedParameter,
       ),
@@ -173,7 +175,9 @@ class BubbleScreenState extends State<BubbleScreen> {
             ),
             new IconButton(
               icon: new Icon(Icons.account_circle),
-              onPressed: () {},
+              onPressed: () {
+                getAllLogs();
+              },
             )
           ],
         ),
