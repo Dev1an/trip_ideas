@@ -1,14 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:trip_ideas/model/config.dart';
+import 'package:trip_ideas/main.dart';
 
-class ConfigScreen extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => ConfigScreenState();
-}
-
-
-class ConfigScreenState extends State<ConfigScreen> {
+class ConfigScreenSate extends State<ConfigScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,14 +10,24 @@ class ConfigScreenState extends State<ConfigScreen> {
         title: Text('Trip Ideas'),
       ),
       body: Center(
-        child: Checkbox(value: BUBBLESCREEN, onChanged: (bool) => this.setState(() {
-          BUBBLESCREEN = bool;
-        }),),
+        child: Checkbox(value: VersionSwitcher.showBubbles, onChanged: (state) {
+          setState(() {
+            widget.showBubbles(state);
+          });
+        }),
       ),
       floatingActionButton: CupertinoButton(child: Text('Hello world'), onPressed: () {
         print("pressed button");
       },),
     );
   }
+}
 
+class ConfigScreen extends StatefulWidget {
+  final void Function(bool) showBubbles;
+
+  const ConfigScreen({Key key, this.showBubbles}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => ConfigScreenSate();
 }

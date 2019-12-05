@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 import 'package:trip_ideas/Database.dart';
+import 'package:trip_ideas/configScreen.dart';
 import 'package:trip_ideas/detailScreen/Detail.dart';
 import 'package:trip_ideas/bubbleScreen/RecommendationUtil.dart';
+import 'package:trip_ideas/main.dart';
 import 'package:trip_ideas/model/Parameters.dart';
 import 'package:trip_ideas/model/Destination.dart';
 import 'package:trip_ideas/FireStore.dart';
@@ -173,12 +175,7 @@ class BubbleScreenState extends State<BubbleScreen> {
                 }); // Refresh on back
               },
             ),
-            new IconButton(
-              icon: new Icon(Icons.account_circle),
-              onPressed: () {
-                getAllLogs();
-              },
-            )
+            widget.configButton
           ],
         ),
         body: MediaQuery.of(context).orientation == Orientation.portrait ?
@@ -188,6 +185,10 @@ class BubbleScreenState extends State<BubbleScreen> {
 }
 
 class BubbleScreen extends StatefulWidget {
+  final Widget configButton;
+
+  const BubbleScreen({Key key, this.configButton}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => BubbleScreenState();
 }

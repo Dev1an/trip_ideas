@@ -3,14 +3,20 @@ import 'package:trip_ideas/bubbleScreen/Parameters.dart';
 import 'package:trip_ideas/bubbleScreen/RecommendationUtil.dart';
 import 'package:trip_ideas/detailScreen/Detail.dart';
 import 'package:trip_ideas/detailScreen/DetailCacheUtil.dart';
+import 'package:trip_ideas/main.dart';
 import 'package:trip_ideas/model/Parameters.dart';
 import 'package:trip_ideas/model/Destination.dart';
 import 'package:trip_ideas/Database.dart';
 import 'package:trip_ideas/model/config.dart';
 
+import '../configScreen.dart';
 import '../favoriteOrVisitedScreen.dart';
 
 class CardsScreen extends StatefulWidget {
+  final Widget configButton;
+
+  const CardsScreen({Key key, this.configButton}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => CardsScreenState();
 }
@@ -142,7 +148,8 @@ class CardsScreenState extends State<CardsScreen> {
                   MaterialPageRoute(builder: (context) => FavoriteOrVisitedList(type: FavOrVisEnum.favorite)),
                 ).then((e) => {loadRecommendations()}); // Refresh on back
               },
-            )
+            ),
+            widget.configButton
           ],
         ),
         body:
