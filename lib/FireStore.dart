@@ -3,8 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 final databaseReference = Firestore.instance;
 
 void logAction(String user, String action, String screen) async {
+  String timeNow = new DateTime.now().toIso8601String();
   await databaseReference.collection("log")
-      .add({
+      .document(timeNow).setData({ //key is timestamp
     'user': user,
     'action': action,
     'screen': screen,
