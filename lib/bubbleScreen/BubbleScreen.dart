@@ -16,7 +16,7 @@ import 'Parameters.dart';
 class BubbleScreenState extends State<BubbleScreen> {
   final List<Destination> selectedDestinations = [];
   final List<Parameter> parameters = Parameter.exampleParameters;
-  int page = 1;
+  int page = 0;
 
   final Set<int> favorites = Set.of([]);
   final Set<int> visited = Set.of([]);
@@ -115,8 +115,9 @@ class BubbleScreenState extends State<BubbleScreen> {
           });
         },
         onRefresh: () {
+          page = (page + 1) % 4;
           loadRecommendations();
-          page = (page + 1) % 4 ;
+
           print("Load bubbles with settings:");
           parameters.forEach((parameter) => print("\t- ${parameter.description}:\t${parameter.value}"));
           logAction("Mr. User","More button clicked", "BubbleScreen");

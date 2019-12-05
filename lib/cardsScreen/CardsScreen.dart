@@ -24,7 +24,7 @@ class CardsScreen extends StatefulWidget {
 class CardsScreenState extends State<CardsScreen> {
   final List<Destination> selectedDestinations = [];
   final List<Parameter> parameters = Parameter.exampleParameters;
-  int page = 1;
+  int page = 0;
 
   final Set<int> favorites = Set.of([]);
   final Set<int> visited = Set.of([]);
@@ -91,8 +91,8 @@ class CardsScreenState extends State<CardsScreen> {
               icon: Icon(Icons.refresh),
               label: Text("More..."),
               onPressed: () {
-                loadRecommendations();
                 page = (page + 1) % 4 ;
+                loadRecommendations();
               },
             ),
             Expanded(
