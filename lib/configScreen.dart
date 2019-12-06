@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:trip_ideas/FireStore.dart';
 import 'package:trip_ideas/bubbleScreen/BubbleScreen.dart';
 import 'package:trip_ideas/cardsScreen/CardsScreen.dart';
-import 'package:trip_ideas/main.dart';
 
 class ConfigState extends State<ConfigScreen> {
+  static String userID;
+
   bool showBubbles = true;
   String username = '';
   
@@ -27,6 +29,9 @@ class ConfigState extends State<ConfigScreen> {
                 labelText: 'Username',
                 border: OutlineInputBorder(),
               ),
+              onChanged: (state) {
+                username = state;
+              },
             ),
             padding: EdgeInsets.all(8),
           ),
@@ -40,10 +45,20 @@ class ConfigState extends State<ConfigScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
               ),
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => showBubbles ?  BubbleScreen() : CardsScreen()),
-                );
+                logActionData(
+                  'New user',
+                  {
+                    'username': username,
+                    'mode': showBubbles ? 'Bubble' : 'List'
+                  }
+                ).then((userReference) {
+                  userID = userReference.documentID;
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => showBubbles ?  BubbleScreen() : CardsScreen()),
+                          (_) => false
+                  );
+                });
               },
               color: Colors.blueAccent,
               textColor: Colors.white,

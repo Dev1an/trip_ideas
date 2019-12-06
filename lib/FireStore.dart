@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:trip_ideas/configScreen.dart';
 
 final databaseReference = Firestore.instance;
 
@@ -14,16 +15,21 @@ const String MSG_NAVIGATE_TO_VISITED = "Navigated to visited";
 const String MSG_TIME_ON_DETAIL = "Stayed on detail screen for (seconds) ";
 const String MSG_TIME_ON_HOME = "Stayed on home screen for (seconds) ";
 
-void logAction(String user, String message, String screen) async {
-  String timeNow = new DateTime.now().toIso8601String();
-  await databaseReference.collection("log")
-      .document(timeNow).setData({ //key is timestamp
-    'user': user,
+Future<DocumentReference> logAction(String message, String screen) async {
+  return databaseReference.collection("log").add({ //key is timestamp
+    'user': ConfigState.userID,
     'message': message,
     'screen': screen,
-    'time': new DateTime.now().toIso8601String()
+    'time': Timestamp.now()
   });
-  //print(ref.documentID);
+}
+
+Future<DocumentReference> logActionData(String event, Map<String, dynamic> data) async {
+  return databaseReference.collection("log").add({ //key is timestamp
+    'event': event,
+    'data': data,
+    'time': Timestamp.now()
+  });
 }
 
 void getAllLogs() async {

@@ -49,7 +49,7 @@ class _DetailWidgetState extends State<DetailWidget> {
       _favorite = newValue;
       if(_favorite) addFavorite(currentDestination);
       else deleteFavorite(currentDestination);
-      logAction("Mr. User",MSG_MARK_FAVORITE_DETAIL, "some screen");
+      logAction(MSG_MARK_FAVORITE_DETAIL, "Detail screen");
     });
   }
 
@@ -60,7 +60,7 @@ class _DetailWidgetState extends State<DetailWidget> {
       _visited = newValue;
       if(_visited) addVisited(currentDestination);
       else deleteVisited(currentDestination);
-      logAction("Mr. User",MSG_MARK_VISITED_DETAIL, "some screen");
+      logAction(MSG_MARK_VISITED_DETAIL, "some screen");
     });
   }
 
@@ -191,13 +191,13 @@ class _DetailWidgetState extends State<DetailWidget> {
               icon: new Icon(Icons.assignment_turned_in),
               onPressed: () {
                 int screenTime = (new DateTime.now()).difference(DetailWidget.showingStart).inSeconds;
-                logAction("Mr. User",MSG_TIME_ON_DETAIL+screenTime.toString(),"some screen");
-                logAction("Mr. User",MSG_NAVIGATE_TO_VISITED, "some screen");
+                logAction(MSG_TIME_ON_DETAIL+screenTime.toString(),"some screen");
+                logAction(MSG_NAVIGATE_TO_VISITED, "some screen");
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => FavoriteOrVisitedList(type: FavOrVisEnum.visited)),
                 ).then((e) => {
-                  logAction("Mr. User",MSG_NAVIGATE_TO_DETAIL, "some screen"),
+                  logAction(MSG_NAVIGATE_TO_DETAIL, "some screen"),
                   DetailWidget.showingStart = new DateTime.now(),
                   _loadDetailsOfCurrent()
                 }); // Refresh on back
@@ -207,13 +207,13 @@ class _DetailWidgetState extends State<DetailWidget> {
               icon: new Icon(Icons.favorite),
               onPressed: () {
                 int screenTime = (new DateTime.now()).difference(DetailWidget.showingStart).inSeconds;
-                logAction("Mr. User",MSG_TIME_ON_DETAIL+screenTime.toString(),"some screen");
-                logAction("Mr. User",MSG_NAVIGATE_TO_FAVORITES, "some screen"); //TODO global var?
+                logAction(MSG_TIME_ON_DETAIL+screenTime.toString(),"some screen");
+                logAction(MSG_NAVIGATE_TO_FAVORITES, "some screen"); //TODO global var?
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => FavoriteOrVisitedList(type: FavOrVisEnum.favorite)),
                 ).then((e) => {
-                  logAction("Mr. User",MSG_NAVIGATE_TO_DETAIL, "some screen"),
+                  logAction(MSG_NAVIGATE_TO_DETAIL, "some screen"),
                   DetailWidget.showingStart = new DateTime.now(),
                   _loadDetailsOfCurrent()
                 }); // Refresh on back

@@ -9,6 +9,7 @@ import 'package:trip_ideas/model/Destination.dart';
 import 'package:trip_ideas/Database.dart';
 import 'package:trip_ideas/model/config.dart';
 
+import '../configScreen.dart';
 import '../favoriteOrVisitedScreen.dart';
 
 class CardsScreen extends StatefulWidget {
@@ -90,7 +91,7 @@ class CardsScreenState extends State<CardsScreen> {
               onPressed: () {
                 page = (page + 1) % 4 ;
                 loadRecommendations();
-                logAction("Mr. User",MSG_MORE_BUTTON, "CardsScreen");
+                logAction(MSG_MORE_BUTTON, "CardsScreen");
               },
             ),
             Expanded(
@@ -133,14 +134,14 @@ class CardsScreenState extends State<CardsScreen> {
               icon: new Icon(Icons.assignment_turned_in),
               onPressed: () {
                 int screenTime = (new DateTime.now()).difference(showingStart).inSeconds;
-                logAction("Mr. User",MSG_TIME_ON_HOME+screenTime.toString(),"CardsScreen");
-                logAction("Mr. User",MSG_NAVIGATE_TO_VISITED, "CardsScreen");
+                logAction(MSG_TIME_ON_HOME+screenTime.toString(),"CardsScreen");
+                logAction(MSG_NAVIGATE_TO_VISITED, "CardsScreen");
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => FavoriteOrVisitedList(type: FavOrVisEnum.visited)),
                 ).then((e) => {
                   showingStart = new DateTime.now(),
-                  logAction("Mr. User",MSG_NAVIGATE_TO_HOME, "CardsScreen"),
+                  logAction(MSG_NAVIGATE_TO_HOME, "CardsScreen"),
                   loadRecommendations()
                 }); // Refresh on back
               },
@@ -149,18 +150,24 @@ class CardsScreenState extends State<CardsScreen> {
               icon: new Icon(Icons.favorite),
               onPressed: () {
                 int screenTime = (new DateTime.now()).difference(showingStart).inSeconds;
-                logAction("Mr. User",MSG_TIME_ON_HOME+screenTime.toString(),"CardsScreen");
-                logAction("Mr. User",MSG_NAVIGATE_TO_FAVORITES, "CardsScreen");
+                logAction(MSG_TIME_ON_HOME+screenTime.toString(),"CardsScreen");
+                logAction(MSG_NAVIGATE_TO_FAVORITES, "CardsScreen");
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => FavoriteOrVisitedList(type: FavOrVisEnum.favorite)),
                 ).then((e) => {
                   showingStart = new DateTime.now(),
-                  logAction("Mr. User",MSG_NAVIGATE_TO_HOME, "CardsScreen"),
+                  logAction(MSG_NAVIGATE_TO_HOME, "CardsScreen"),
                   loadRecommendations()
                 }); // Refresh on back
               },
             ),
+            new IconButton(
+              icon: new Icon(Icons.settings),
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ConfigScreen()));
+              },
+            )
           ],
         ),
         body:
@@ -179,16 +186,16 @@ class CardsScreenState extends State<CardsScreen> {
         child: new InkWell(
           onTap: () {
             int screenTime = (new DateTime.now()).difference(showingStart).inSeconds;
-            logAction("Mr. User",MSG_TIME_ON_HOME+screenTime.toString(),"CardsScreen");
-            logAction("Mr. User",MSG_NAVIGATE_TO_DETAIL, "CardsScreen");
+            logAction(MSG_TIME_ON_HOME+screenTime.toString(),"CardsScreen");
+            logAction(MSG_NAVIGATE_TO_DETAIL, "CardsScreen");
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => DetailWidget(dest:selectedDestinations[index])),
             ).then((value) {
               showingStart = new DateTime.now();
               int screenTime = (new DateTime.now()).difference(DetailWidget.showingStart).inSeconds;
-              logAction("Mr. User",MSG_TIME_ON_DETAIL+screenTime.toString(),"CardsScreen");
-              logAction("Mr. User",MSG_NAVIGATE_TO_HOME, "CardsScreen");
+              logAction(MSG_TIME_ON_DETAIL+screenTime.toString(),"CardsScreen");
+              logAction(MSG_NAVIGATE_TO_HOME, "CardsScreen");
               loadRecommendations();
             });
           },
@@ -266,7 +273,7 @@ class CardsScreenState extends State<CardsScreen> {
         favorites.add(destinationID);
         addFavorite(dest);
       }
-      logAction("Mr. User",MSG_MARK_FAVORITE_HOME, "CardsScreen");
+      logAction(MSG_MARK_FAVORITE_HOME, "CardsScreen");
     });
   }
 
@@ -280,7 +287,7 @@ class CardsScreenState extends State<CardsScreen> {
         visited.add(destinationID);
         addVisited(dest);
       }
-      logAction("Mr. User",MSG_MARK_VISITED_HOME, "CardsScreen");
+      logAction(MSG_MARK_VISITED_HOME, "CardsScreen");
     });
   }
 }
