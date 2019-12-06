@@ -18,7 +18,7 @@ const String MSG_TIME_ON_HOME = "Stayed on home screen for (seconds) ";
 Future<DocumentReference> logAction(String message, String screen) async {
   return databaseReference.collection("log").add({ //key is timestamp
     'user': ConfigState.userID,
-    'message': message,
+    'event': message,
     'screen': screen,
     'time': Timestamp.now()
   });
