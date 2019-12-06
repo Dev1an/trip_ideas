@@ -76,54 +76,39 @@ class CardsScreenState extends State<CardsScreen> {
         child: (selectedDestinations == null || selectedDestinations.isEmpty)
             ? Center(child: Text('Loading...')) :
         ListView.builder(
-          itemCount: 4,
+          itemCount: 5,
           itemBuilder: _buildItemsForListView,
         ),
       ),
+
       Expanded(
         flex: 3,
-        child: Column(
-          children: <Widget>[
-            RaisedButton.icon(
-              color: Colors.lightBlueAccent,
-              icon: Icon(Icons.refresh),
-              label: Text("More..."),
-              onPressed: () {
-                page = (page + 1) % 4 ;
+        child: Container(
+          child: ParameterSliders(
+            parameters: parameters,
+            changeCallback: (changeParameter) {
+              setState(changeParameter);
+            },
+            changeStartCallback: (parameter) {
+              setState(() {
+                characteristicHighlighted = parameter;
+              });
+            },
+            changeEndCallback: (parameter) {
+              setState(() {
+                characteristicHighlighted = null;
                 loadRecommendations();
-                logAction(MSG_MORE_BUTTON, "CardsScreen");
-              },
-            ),
-            Expanded(
-              child: Container(
-                child: ParameterSliders(
-                  parameters: parameters,
-                  changeCallback: (changeParameter) {
-                    setState(changeParameter);
-                  },
-                  changeStartCallback: (parameter) {
-                    setState(() {
-                      characteristicHighlighted = parameter;
-                    });
-                  },
-                  changeEndCallback: (parameter) {
-                    setState(() {
-                      characteristicHighlighted = null;
-                      loadRecommendations();
-                    });
-                  },
-                  highlightParameter: (parameter) =>
-                      setState(() {
-                        characteristicHighlighted = parameter;
-                      }),
-                ),
-                //padding: EdgeInsets.only(top: 10),
-              ),
-            )
-          ],
-        )
-
+              });
+            },
+            highlightParameter: (parameter) =>
+                setState(() {
+                  characteristicHighlighted = parameter;
+                }),
+          ),
+          //padding: EdgeInsets.only(top: 10),
+        ),
       )
+
     ];
 
     return Scaffold(
@@ -174,13 +159,26 @@ class CardsScreenState extends State<CardsScreen> {
           Container(
             child: MediaQuery.of(context).orientation == Orientation.portrait ?
               Column(children: components) : Row(children: components,),
-            color: Color(0x3f81D4FA),
           )
 
     );
   }
 
-  Card _buildItemsForListView(BuildContext context, int index) {
+  Widget _buildItemsForListView(BuildContext context, int index) {
+    if (index == 4) return Container(
+      padding: EdgeInsets.all(8),
+      child: RaisedButton.icon(
+        color: Colors.blueAccent,
+        textColor: Colors.white,
+        icon: Icon(Icons.refresh),
+        label: Text("More..."),
+        onPressed: () {
+          page = (page + 1) % 4 ;
+          loadRecommendations();
+          logAction(MSG_MORE_BUTTON, "CardsScreen");
+        },
+      ),
+    );
     return Card(
         elevation: 5.0,
         child: new InkWell(
@@ -201,43 +199,45 @@ class CardsScreenState extends State<CardsScreen> {
           },
           child: new Row(
             children: <Widget>[
-              Container(
-                height: 125,
-                width: 325,
-                decoration: new BoxDecoration(
-                    image: new DecorationImage(
-                      fit: BoxFit.fitWidth,
-                      alignment: FractionalOffset.topLeft,
-                      image: new NetworkImage(
-                          selectedDestinations[index].pictureURL),
-                    )
-                ),
-                child: Padding(
-                  padding: new EdgeInsets.all(10.0),
-                  child: Stack(
-                    children: <Widget>[
-                      Text(
-                        selectedDestinations[index].destination,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 30,
-                            shadows: [
-                              Shadow(blurRadius: 3, color: Colors.black),
-                              Shadow(blurRadius: 7, color: Colors.black),
-                            ]
-                        )),
-                      Align(
-                        alignment: Alignment.bottomLeft,
-                        child: characteristicHighlighted!= null ?
-                          LinearProgressIndicator(
-                            value: getScoreValue(selectedDestinations[index]),
-                            valueColor: AlwaysStoppedAnimation<Color>(scoreColor),
-                            backgroundColor: Colors.white30,
-                          ) : Container()
-                      )],
+              Flexible(
+                child: Container(
+                  height: 125,
+//                width: 325,
+                  decoration: new BoxDecoration(
+                      image: new DecorationImage(
+                        fit: BoxFit.fill,
+                        alignment: FractionalOffset.topLeft,
+                        image: new NetworkImage(
+                            selectedDestinations[index].pictureURL),
+                      )
                   ),
+                  child: Padding(
+                    padding: new EdgeInsets.all(10.0),
+                    child: Stack(
+                      children: <Widget>[
+                        Text(
+                          selectedDestinations[index].destination,
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 30,
+                              shadows: [
+                                Shadow(blurRadius: 3, color: Colors.black),
+                                Shadow(blurRadius: 7, color: Colors.black),
+                              ]
+                          )),
+                        Align(
+                          alignment: Alignment.bottomLeft,
+                          child: characteristicHighlighted!= null ?
+                            LinearProgressIndicator(
+                              value: getScoreValue(selectedDestinations[index]),
+                              valueColor: AlwaysStoppedAnimation<Color>(scoreColor),
+                              backgroundColor: Colors.white30,
+                            ) : Container()
+                        )],
+                    ),
 
-                  ),),
+                    ),),
+              ),
               Column(
                 children: <Widget>[
                   FavoriteOrVisitedWidget(destination: selectedDestinations[index], type: FavOrVisEnum.favorite,onChanged: _handleFavoriteChanged),
