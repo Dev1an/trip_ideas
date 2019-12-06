@@ -12,10 +12,6 @@ import 'package:trip_ideas/model/config.dart';
 import '../favoriteOrVisitedScreen.dart';
 
 class CardsScreen extends StatefulWidget {
-  final Widget configButton;
-
-  const CardsScreen({Key key, this.configButton}) : super(key: key);
-
   @override
   State<StatefulWidget> createState() => CardsScreenState();
 }
@@ -165,7 +161,6 @@ class CardsScreenState extends State<CardsScreen> {
                 }); // Refresh on back
               },
             ),
-            widget.configButton
           ],
         ),
         body:

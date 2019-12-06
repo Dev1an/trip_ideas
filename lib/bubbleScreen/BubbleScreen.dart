@@ -194,7 +194,6 @@ class BubbleScreenState extends State<BubbleScreen> {
                 }); // Refresh on back
               },
             ),
-            widget.configButton
           ],
         ),
         body: MediaQuery.of(context).orientation == Orientation.portrait ?
@@ -204,10 +203,6 @@ class BubbleScreenState extends State<BubbleScreen> {
 }
 
 class BubbleScreen extends StatefulWidget {
-  final Widget configButton;
-
-  const BubbleScreen({Key key, this.configButton}) : super(key: key);
-
   @override
   State<StatefulWidget> createState() => BubbleScreenState();
 }
