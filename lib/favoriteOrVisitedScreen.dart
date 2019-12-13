@@ -67,7 +67,7 @@ class FavoriteOrVisitedListState extends State<FavoriteOrVisitedList> {
         },
         child: new Row(
           children: <Widget>[
-          Flexible(
+          Expanded(
             child: Container(
               height: 125,
               decoration: new BoxDecoration(
@@ -93,7 +93,8 @@ class FavoriteOrVisitedListState extends State<FavoriteOrVisitedList> {
                           Shadow(blurRadius: 7, color: Colors.black),
                         ],
                         // Solid text as fill.
-                      ),)
+                      ),
+                    )
                   ],
                 ),),),
           ),

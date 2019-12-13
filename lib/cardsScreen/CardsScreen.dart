@@ -204,7 +204,7 @@ class CardsScreenState extends State<CardsScreen> {
                   height: 125,
                   decoration: new BoxDecoration(
                       image: new DecorationImage(
-                        fit: BoxFit.fill,
+                        fit: BoxFit.fitWidth,
                         alignment: FractionalOffset.topLeft,
                         image: new NetworkImage(
                             selectedDestinations[index].pictureURL),
