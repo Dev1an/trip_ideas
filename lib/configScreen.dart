@@ -4,6 +4,8 @@ import 'package:trip_ideas/FireStore.dart';
 import 'package:trip_ideas/bubbleScreen/BubbleScreen.dart';
 import 'package:trip_ideas/cardsScreen/CardsScreen.dart';
 
+import 'Database.dart';
+
 class ConfigState extends State<ConfigScreen> {
   static String userID;
 
