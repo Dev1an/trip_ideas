@@ -202,7 +202,6 @@ class CardsScreenState extends State<CardsScreen> {
               Flexible(
                 child: Container(
                   height: 125,
-//                width: 325,
                   decoration: new BoxDecoration(
                       image: new DecorationImage(
                         fit: BoxFit.fill,

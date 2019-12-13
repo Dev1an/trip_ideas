@@ -67,35 +67,36 @@ class FavoriteOrVisitedListState extends State<FavoriteOrVisitedList> {
         },
         child: new Row(
           children: <Widget>[
-          Container(
-            height: 125,
-            width: 325,
-            decoration: new BoxDecoration(
-                image: new DecorationImage(
-                  fit: BoxFit.fitWidth,
-                  alignment: FractionalOffset.topLeft,
-                  image: new NetworkImage(
-                      _favoritesOrVisiteds[index].pictureURL),
-                )
-            ),
-            child: Padding(
-              padding: new EdgeInsets.all(10.0),
-              child: Stack(
-                children: <Widget>[
-                  // Stroked text as border.
-                  Text(
-                    _favoritesOrVisiteds[index].destination,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 30,
-                      shadows: [
-                        Shadow(blurRadius: 3, color: Colors.black),
-                        Shadow(blurRadius: 7, color: Colors.black),
-                      ],
-                      // Solid text as fill.
-                    ),)
-                ],
-              ),),),
+          Flexible(
+            child: Container(
+              height: 125,
+              decoration: new BoxDecoration(
+                  image: new DecorationImage(
+                    fit: BoxFit.fitWidth,
+                    alignment: FractionalOffset.topLeft,
+                    image: new NetworkImage(
+                        _favoritesOrVisiteds[index].pictureURL),
+                  )
+              ),
+              child: Padding(
+                padding: new EdgeInsets.all(10.0),
+                child: Stack(
+                  children: <Widget>[
+                    // Stroked text as border.
+                    Text(
+                      _favoritesOrVisiteds[index].destination,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 30,
+                        shadows: [
+                          Shadow(blurRadius: 3, color: Colors.black),
+                          Shadow(blurRadius: 7, color: Colors.black),
+                        ],
+                        // Solid text as fill.
+                      ),)
+                  ],
+                ),),),
+          ),
           FavoriteOrVisitedWidget(index: index, type: type,onChanged: _handleFavOrVisChanged)
           ],
         ),
