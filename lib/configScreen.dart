@@ -45,19 +45,21 @@ class ConfigState extends State<ConfigScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
               ),
               onPressed: () {
-                logActionData(
-                  'New user',
-                  {
-                    'username': username,
-                    'mode': showBubbles ? 'Bubble' : 'List'
-                  }
-                ).then((userReference) {
-                  userID = userReference.documentID;
-                  Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (context) => showBubbles ?  BubbleScreen() : CardsScreen()),
-                          (_) => false
-                  );
+                DatabaseHelper.instance.resetUser().then((_) {
+                  logActionData(
+                      'New user',
+                      {
+                        'username': username,
+                        'mode': showBubbles ? 'Bubble' : 'List',
+                      }
+                  ).then((userReference) {
+                    userID = userReference.documentID;
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => showBubbles ?  BubbleScreen() : CardsScreen()),
+                            (_) => false
+                    );
+                  });
                 });
               },
               color: Colors.blueAccent,

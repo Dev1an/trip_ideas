@@ -19,9 +19,9 @@ final String columnScoreShopping = 'scoreshopping';
 final String columnScoreNightlife = 'scorenightlife';
 final String columnImage = 'image';
 
-final String tableFavorites = 'favorites';
-final String tableVisited = 'visited';
-final String tablePreferences = 'preferences';
+const String tableFavorites = 'favorites';
+const String tableVisited = 'visited';
+const String tablePreferences = 'preferences';
 List<DestinationSimple> shownList = new List<DestinationSimple>();
 
 // singleton class to manage the database
@@ -166,6 +166,18 @@ class DatabaseHelper {
   Future<int> _deleteDestinationSimpleInTable(int id,String table) async {
     Database db = await database;
     return await db.delete(table, where: '$columnId = ?', whereArgs: [id]);
+  }
+
+  Future<int> _deleteAll(table) async {
+    Database db = await database;
+    return db.delete(table);
+  }
+
+  Future<List<int>> resetUser() async {
+    return Future.wait([
+      _deleteAll(tableVisited),
+      _deleteAll(tableFavorites)
+    ]);
   }
 
   // ----------------- CHECK IF EXISTS -----------------
